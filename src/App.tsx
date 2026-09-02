@@ -2264,7 +2264,7 @@ function MarketDetail({ asset, onBack, onTransfer }: { asset: MarketAsset; onBac
   return <section className="detail-screen"><header className="detail-heading"><button className="back-circle" onClick={onBack} aria-label="Back">‹</button><button className="favorite-button" aria-label="Add to favorites"><Icon name="star" size="md" /></button></header><div className="detail-identity"><CryptoMark asset={asset} large /><div><strong>{asset.base}</strong><span>{asset.name}</span></div><div className="detail-price"><strong>{formatUsd(currentPrice)}</strong><span className={positive ? 'positive-text' : 'negative-text'}>{changeValue !== null ? `${changeValue >= 0 ? '+' : '-'}${formatUsd(Math.abs(changeValue))} ` : ''}({formatPercent(change)})</span></div></div><div className="detail-chart-wrap">{loading && !points ? <div className="detail-chart-loading">Loading live chart…</div> : <MarketChart points={points} positive={positive} />}</div><div className="range-tabs">{['LIVE', '1m', '1H', '1D', '1W', '1M'].map((item) => <button className={item === '1H' ? 'active' : ''} key={item}>{item}</button>)}<Icon name="activity" size="md" /></div>{chartError && <span className="chart-note">Chart temporarily unavailable · showing cached data when available</span>}<div className="balance-block"><div><strong>Your balance</strong><span>{formatUsd(balanceValue)}</span></div><small>{formatTokenBalance(tokenBalance)} {asset.base}</small></div><div className="detail-actions"><button type="button" onClick={() => onTransfer('send', asset)}><Icon name="scan" size="md" />Send</button><button type="button" onClick={() => onTransfer('receive', asset)}><Icon name="qr" size="md" />Receive</button></div><section className="ai-summary"><h2>✦ AI Summary</h2><p>{asset.name} is a decentralised digital asset traded on global markets. Its price and chart above are updated from live market data.</p><button>Ask AI <span>›</span></button></section><div className="trade-ticker">0xb0...067d sold <b>$3.50 {asset.base}</b> ↘</div><button className="trade-cta"><Icon name="refresh" size="md" />Trade</button></section>
 }
 
-type InitialSetupStep = 'welcome' | 'create-passcode' | 'confirm-passcode' | 'authentication-required' | 'enter-passcode' | 'notifications' | 'wallet-ready' | 'fund-wallet'
+type InitialSetupStep = 'welcome' | 'create-passcode' | 'confirm-passcode' | 'authentication-required' | 'enter-passcode' | 'notifications' | 'wallet-ready' | 'fund-wallet' | 'entering-app'
 
 function SetupStepRedirect({ onRedirect }: { onRedirect: () => void }) {
   useEffect(() => {
@@ -2289,6 +2289,12 @@ function InitialSetup({ onEnterApp }: { onEnterApp: () => void }) {
   useEffect(() => () => {
     if (authenticationTimer.current !== null) window.clearTimeout(authenticationTimer.current)
   }, [])
+
+  useEffect(() => {
+    if (step !== 'entering-app') return
+    const timer = window.setTimeout(onEnterApp, 700)
+    return () => window.clearTimeout(timer)
+  }, [step, onEnterApp])
 
   const addDigit = (digit: string) => {
     if (hasPasscodeMismatch) return
@@ -2351,6 +2357,8 @@ function InitialSetup({ onEnterApp }: { onEnterApp: () => void }) {
     }, 420)
   }
 
+  const beginAppEntry = () => setStep('entering-app')
+
   // The fingerprint-authentication sheet is no longer part of this flow.
   if (step === 'authentication-required') return <SetupStepRedirect onRedirect={() => { setPasscode(''); setStep('enter-passcode') }} />
 
@@ -2358,9 +2366,11 @@ function InitialSetup({ onEnterApp }: { onEnterApp: () => void }) {
 
   if (step === 'enter-passcode') return <main className="initial-setup initial-setup-passcode setup-enter-passcode"><button type="button" className="setup-back-button" onClick={() => setStep('authentication-required')} aria-label="Back"><BackArrowIcon /></button><section className="setup-passcode-content"><h1>Enter passcode</h1><div className={`setup-passcode-boxes${hasPasscodeMismatch ? ' error' : ''}`} aria-label="Passcode progress">{Array.from({ length: 6 }).map((_, index) => <span className="setup-passcode-box" key={index}>{index < passcode.length && <i aria-hidden="true" />}</span>)}</div><button type="button" className="setup-use-touch-id"><PasscodeFingerprintImage />Use Touch Id</button></section><div className="setup-keypad">{digits.map((digit) => <button type="button" key={digit} onClick={() => addLoginPasscodeDigit(digit)} aria-label={`Number ${digit}`}>{digit}</button>)}<span aria-hidden="true" /><button type="button" onClick={() => addLoginPasscodeDigit('0')} aria-label="Number 0">0</button><button type="button" className="setup-keypad-delete" onClick={() => setPasscode((current) => current.slice(0, -1))} aria-label="Delete passcode"><span className="backspace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path className="backspace-shape" d="M21.5 3.5H7.7c-.62 0-1.2.31-1.53.82L1.58 11.6a.75.75 0 0 0 0 .8l4.59 7.28c.33.51.91.82 1.53.82h13.8c.83 0 1.5-.67 1.5-1.5V5c0-.83-.67-1.5-1.5-1.5Z" /><path className="backspace-close" d="m10.7 8.8 5.6 6.4m0-6.4-5.6 6.4" /></svg></span></button></div></main>
 
-  if (step === 'fund-wallet') return <main className="initial-setup fund-wallet-screen"><header className="fund-wallet-header"><button type="button" onClick={onEnterApp} aria-label="Back"><BackArrowIcon /></button><h1>Fund your wallet</h1><span /></header><section className="fund-wallet-section"><h2>Recommended for you</h2><button type="button" className="fund-wallet-row"><span className="fund-google-pay">G Pay</span><strong>Google Pay</strong><b>›</b></button></section><section className="fund-wallet-section"><h2>All options</h2><div className="fund-wallet-options"><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="wallet" size={22} /></span><strong>All payment methods</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="swap" size={22} /></span><strong>Exchange</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="qr" size={22} /></span><strong>Crypto wallet</strong><b>›</b></button></div></section></main>
+  if (step === 'entering-app') return <main className="initial-setup setup-app-loading" aria-label="Loading"><span className="setup-app-loader" /></main>
 
-  if (step === 'wallet-ready') return <main className="initial-setup"><WalletReadyScreen onContinue={onEnterApp} onFund={() => setStep('fund-wallet')} /></main>
+  if (step === 'fund-wallet') return <main className="initial-setup fund-wallet-screen"><header className="fund-wallet-header"><button type="button" onClick={beginAppEntry} aria-label="Back"><BackArrowIcon /></button><h1>Fund your wallet</h1><span /></header><section className="fund-wallet-section"><h2>Recommended for you</h2><button type="button" className="fund-wallet-row"><span className="fund-google-pay">G Pay</span><strong>Google Pay</strong><b>›</b></button></section><section className="fund-wallet-section"><h2>All options</h2><div className="fund-wallet-options"><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="wallet" size={22} /></span><strong>All payment methods</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="swap" size={22} /></span><strong>Exchange</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="qr" size={22} /></span><strong>Crypto wallet</strong><b>›</b></button></div></section></main>
+
+  if (step === 'wallet-ready') return <main className="initial-setup"><WalletReadyScreen onContinue={beginAppEntry} onFund={() => setStep('fund-wallet')} /></main>
 
   if (step === 'notifications') return <main className="initial-setup initial-notifications"><section className="notifications-content"><div className="notifications-art-space"><img src="/keep_up.png" alt="" /></div><h1>Keep up with the market!</h1><p>Turn on notifications to keep track of prices<br />and receive transaction updates.</p><div><button type="button" className="setup-primary-button" onClick={() => setShowNotificationPermission(true)}>Enable Notifications</button><button type="button" className="notifications-skip" onClick={() => setStep('wallet-ready')}>Skip, I&apos;ll do it later</button></div>{showNotificationPermission && <div className="notification-permission-overlay" role="dialog" aria-modal="true" aria-labelledby="notification-permission-title"><section className="notification-permission-dialog"><span className="notification-permission-icon"><RiNotification3Line aria-hidden="true" /></span><h2 id="notification-permission-title">Allow Trust Wallet to send you notifications?</h2><button type="button" className="notification-permission-allow" onClick={() => setStep('wallet-ready')}>ALLOW</button><button type="button" className="notification-permission-deny" onClick={() => setStep('wallet-ready')}>DON&apos;T ALLOW</button></section></div>}</section></main>
 
@@ -3199,7 +3209,7 @@ function App() {
     }
   }, [isLocked, searchableAssets])
 
-  if (!isInitialSetupComplete) return <InitialSetup onEnterApp={() => { if (!wallets.length) addNewWallet(); persistInitialSetupComplete(); persistUnlockedSession(); setIsInitialSetupComplete(true) }} />
+  if (!isInitialSetupComplete) return <InitialSetup onEnterApp={() => { if (!wallets.length) addNewWallet(); persistInitialSetupComplete(); persistUnlockedSession(); navigate('/'); setIsInitialSetupComplete(true) }} />
 
   if (isLocked) return <LockScreen onUnlock={() => { persistUnlockedSession(); setIsLocked(false); if (route.kind === 'unlock') navigate('/') }} />
 
