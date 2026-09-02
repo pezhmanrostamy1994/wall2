@@ -2648,3 +2648,149 @@ body, .app-shell { color: var(--light-ink); background: #fff; }
   .history-detail-value small { font-size: 13px; }
   .history-detail-explorer { min-height: 50px; font-size: 15px; }
 }
+
+/* First-run wallet setup */
+.initial-setup { position: relative; width: min(100%, 591px); min-height: 100dvh; margin: 0 auto; overflow: hidden; color: var(--ref-ink); background: #fff; }
+.initial-setup-welcome { display: flex; padding: 24px 24px calc(20px + env(safe-area-inset-bottom)); }
+.setup-welcome-content { display: flex; width: 100%; min-height: calc(100dvh - 44px); flex-direction: column; }
+.setup-welcome-art-space { min-height: clamp(330px, 59dvh, 570px); flex: 1; }
+.setup-welcome-art-space img { display: block; width: 100%; height: 100%; max-height: 56dvh; object-fit: contain; object-position: center bottom; }
+.setup-welcome-content h1 { margin: 0; color: #202126; font-size: clamp(29px, 7.3vw, 37px); font-weight: 700; letter-spacing: -.045em; line-height: 1.08; }
+.setup-welcome-actions { display: grid; gap: 14px; margin-top: 46px; }
+.setup-primary-button, .setup-secondary-button { width: 100%; height: 64px; border-radius: 34px; font-size: 19px; font-weight: 650; letter-spacing: -.02em; cursor: pointer; }
+.setup-primary-button { color: #fff; background: var(--ref-blue); }
+.setup-secondary-button { color: #292a2e; background: #f0f0f2; }
+.setup-primary-button:active, .setup-secondary-button:active { transform: scale(.985); }
+.setup-terms { margin: 27px 0 0; color: #6d6e74; font-size: 14px; font-weight: 500; line-height: 1.5; text-align: center; }
+.setup-terms span { color: var(--ref-blue); font-weight: 600; }
+.initial-setup-passcode { display: flex; flex-direction: column; align-items: center; padding: 19px 24px calc(25px + env(safe-area-inset-bottom)); }
+.setup-back-button { position: absolute; top: 19px; left: 18px; display: grid; width: 44px; height: 44px; place-items: center; padding: 0; color: #292a2e; background: transparent; cursor: pointer; }
+.setup-back-button .back-arrow-icon { width: 28px; height: 28px; }
+.setup-passcode-content { width: min(100%, 390px); margin-top: clamp(150px, 23dvh, 228px); text-align: center; }
+.setup-passcode-content h1 { margin: 0; color: #222328; font-size: 27px; font-weight: 700; letter-spacing: -.04em; line-height: 1.15; }
+.setup-passcode-boxes { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 42px; }
+.setup-passcode-box { display: grid; width: 49px; height: 54px; place-items: center; border: 2px solid #bfc1c6; border-radius: 6px; background: #fff; }
+.setup-passcode-box i { display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--ref-blue); }
+.setup-passcode-boxes.complete .setup-passcode-box { border-color: var(--ref-blue); }
+.setup-passcode-boxes.error .setup-passcode-box { border-color: #e52e45; }
+.setup-passcode-boxes.error .setup-passcode-box i { background: #e52e45; }
+.setup-passcode-boxes.error { animation: passcode-error-shake .28s ease-in-out both; }
+.setup-passcode-content p { margin: 24px auto 0; color: #72737a; font-size: 15px; font-weight: 500; line-height: 1.45; }
+.setup-keypad { display: grid; width: min(100%, 360px); margin-top: auto; grid-template-columns: repeat(3, 1fr); gap: clamp(17px, 3.4dvh, 30px) 18px; padding-top: 42px; }
+.setup-keypad button { display: grid; height: 50px; place-items: center; padding: 0; color: #25262b; background: transparent; font-size: 34px; font-weight: 650; cursor: pointer; }
+.setup-keypad button:active { color: var(--ref-blue); transform: scale(.94); }
+.setup-keypad-fingerprint:disabled { cursor: not-allowed; opacity: 1; }
+.setup-keypad-fingerprint .passcode-fingerprint-image { display: block; width: 34px; height: 34px; background-color: #96979d; -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat; mask: url('/fingerprint%20(1).png') center / contain no-repeat; }
+.setup-keypad-delete .backspace-icon { width: 33px; height: 33px; color: #777980; }
+.setup-keypad-delete .backspace-icon svg { width: 33px; height: 33px; }
+.setup-keypad-delete .backspace-shape { fill: currentColor; }
+.setup-keypad-delete .backspace-close { fill: none; stroke: #fff; stroke-width: 2.1; stroke-linecap: round; }
+.setup-biometric-overlay { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(27,29,34,.26); backdrop-filter: blur(3px); }
+.setup-biometric-modal { width: min(100%, 410px); padding: 38px 25px 25px; border-radius: 26px; background: #fff; box-shadow: 0 18px 54px rgba(32,34,43,.22); text-align: center; animation: wallet-delete-dialog-in .25s cubic-bezier(.22,.8,.24,1) both; }
+.setup-biometric-illustration { display: block; width: 118px; height: 108px; margin: -8px auto 18px; object-fit: contain; }
+.setup-biometric-modal h2 { margin: 0; color: #222328; font-size: 25px; font-weight: 700; letter-spacing: -.04em; }
+.setup-biometric-modal p { margin: 13px 0 30px; color: #6f7077; font-size: 16px; font-weight: 500; line-height: 1.42; }
+.setup-biometric-modal > div { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+.setup-biometric-modal button { height: 54px; border-radius: 28px; font-size: 17px; font-weight: 650; cursor: pointer; }
+.setup-biometric-deny { color: var(--ref-blue); background: #eff0ff; }
+.setup-biometric-confirm { color: #fff; background: var(--ref-blue); }
+.initial-authentication-required { display: flex; padding: 0 24px calc(23px + env(safe-area-inset-bottom)); }
+.authentication-required-content { display: flex; width: 100%; min-height: 100dvh; flex-direction: column; padding-top: clamp(172px, 27dvh, 250px); }
+.authentication-required-content h1 { margin: 0; color: #222328; font-size: clamp(29px, 7.2vw, 37px); font-weight: 700; letter-spacing: -.045em; line-height: 1.1; }
+.authentication-required-content > p { margin: 20px 0 0; color: #5d5e65; font-size: 19px; font-weight: 600; }
+.authentication-fingerprint { display: flex; align-self: center; width: 230px; margin-top: auto; margin-bottom: 42px; flex-direction: column; align-items: center; gap: 16px; color: #292a2f; background: transparent; font-size: 15px; font-weight: 600; cursor: pointer; touch-action: none; }
+.authentication-fingerprint .passcode-fingerprint-image { display: block; width: 76px; height: 76px; background-color: #26272c; -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat; mask: url('/fingerprint%20(1).png') center / contain no-repeat; transition: background-color .12s ease, filter .12s ease, transform .12s ease; }
+.authentication-fingerprint.authenticating .passcode-fingerprint-image { background-color: var(--ref-blue); filter: drop-shadow(0 0 7px rgba(21,21,244,.55)) drop-shadow(0 0 22px rgba(21,21,244,.32)); transform: scale(1.06); }
+.authentication-pin-button { align-self: flex-start; padding: 8px 0; color: #73747b; background: transparent; font-size: 15px; font-weight: 700; cursor: pointer; }
+.initial-notifications { display: flex; padding: 24px 24px calc(20px + env(safe-area-inset-bottom)); }
+.notifications-content { display: flex; width: 100%; min-height: calc(100dvh - 44px); flex-direction: column; text-align: center; }
+.notifications-art-space { display: flex; min-height: clamp(335px, 50dvh, 530px); flex: 1; align-items: center; justify-content: center; }
+.notifications-art-space img { display: block; width: min(100%, 190px); height: auto; max-height: 220px; object-fit: contain; }
+.notifications-content h1 { margin: 0; color: #202126; font-size: clamp(29px, 7.3vw, 37px); font-weight: 700; letter-spacing: -.045em; line-height: 1.08; }
+.notifications-content > p { margin: 14px 0 0; color: #6d6e74; font-size: 17px; font-weight: 500; line-height: 1.42; }
+.notifications-content > div { display: grid; gap: 19px; margin-top: auto; }
+.notifications-skip { padding: 0; color: var(--ref-blue); background: transparent; font-size: 18px; font-weight: 700; cursor: pointer; }
+.notification-permission-overlay { position: fixed; z-index: 110; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); background: rgba(26,28,33,.32); backdrop-filter: blur(3px); }
+.notification-permission-dialog { display: flex; width: min(100%, 460px); flex-direction: column; align-items: center; padding: 31px 24px 24px; border-radius: 28px; background: #fff; box-shadow: 0 18px 54px rgba(20,22,28,.22); text-align: center; animation: setup-authentication-sheet-rise .28s cubic-bezier(.22,.8,.24,1) both; }
+.notification-permission-icon { display: grid; width: 49px; height: 49px; place-items: center; border-radius: 13px; color: #4d4f56; background: #f0f0f2; }
+.notification-permission-icon svg { width: 28px; height: 28px; }
+.notification-permission-dialog h2 { max-width: 330px; margin: 22px 0 29px; color: #292a2f; font-size: 22px; font-weight: 700; letter-spacing: -.035em; line-height: 1.25; }
+.notification-permission-dialog button { width: 100%; min-height: 58px; border-radius: 19px; font-size: 18px; font-weight: 650; cursor: pointer; }
+.notification-permission-allow { color: #fff; background: var(--ref-blue); }
+.notification-permission-deny { margin-top: 14px; color: #4a4b51; background: #f0f0f2; }
+.setup-authentication-required { display: flex; align-items: flex-end; overflow: hidden; background: #f4f4f6; }
+.setup-authentication-trust-mark { position: absolute; z-index: 0; bottom: calc(56dvh - 50px); left: 50%; width: 100px; height: 100px; opacity: .42; transform: translateX(-50%); }
+.setup-authentication-trust-mark .auth-trust-mark, .setup-authentication-trust-mark .auth-trust-mark img { width: 100px; height: 100px; }
+.setup-authentication-sheet { position: relative; z-index: 1; display: flex; width: 100%; height: 56dvh; min-height: 420px; flex-direction: column; padding: 38px 28px calc(23px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: #fff; box-shadow: 0 -12px 38px rgba(32,34,43,.12); animation: setup-authentication-sheet-rise .34s cubic-bezier(.22,.8,.24,1) both; }
+.setup-authentication-sheet h1 { margin: 0; color: #24252a; font-size: clamp(27px, 7vw, 35px); font-weight: 700; letter-spacing: -.045em; line-height: 1.1; }
+.setup-authentication-sheet > p { margin: 18px 0 0; color: #55565d; font-size: 19px; font-weight: 600; }
+.setup-authentication-sheet .authentication-fingerprint { margin-bottom: 32px; color: #25262b; }
+.setup-authentication-sheet .authentication-fingerprint .passcode-fingerprint-image { background-color: #25262b; }
+.setup-authentication-sheet .authentication-fingerprint.authenticating .passcode-fingerprint-image { background-color: var(--ref-blue); }
+.setup-authentication-sheet .authentication-pin-button { color: #686970; }
+@keyframes setup-authentication-sheet-rise { from { opacity: .55; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+.setup-enter-passcode .setup-passcode-content { margin-top: clamp(146px, 22dvh, 215px); }
+.setup-use-touch-id { display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 23px; padding: 4px 8px; color: #159947; background: transparent; font-size: 16px; font-weight: 650; cursor: pointer; }
+.setup-use-touch-id .passcode-fingerprint-image { display: block; width: 24px; height: 24px; background-color: #159947; -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat; mask: url('/fingerprint%20(1).png') center / contain no-repeat; }
+.setup-enter-passcode .setup-keypad > span[aria-hidden='true'] { display: block; width: 34px; height: 34px; align-self: center; justify-self: center; background-color: #96979d; -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat; mask: url('/fingerprint%20(1).png') center / contain no-repeat; }
+.fund-wallet-screen { padding: 20px 24px; }
+.fund-wallet-header { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; }
+.fund-wallet-header button { display: grid; width: 44px; height: 44px; place-items: center; padding: 0; color: #3c3d43; background: transparent; cursor: pointer; }
+.fund-wallet-header .back-arrow-icon { width: 28px; height: 28px; }
+.fund-wallet-header h1 { margin: 0; color: #25262b; font-size: 23px; font-weight: 700; letter-spacing: -.04em; text-align: center; }
+.fund-wallet-section { margin-top: 54px; }
+.fund-wallet-section + .fund-wallet-section { margin-top: 47px; }
+.fund-wallet-section h2 { margin: 0 0 17px; color: #6b6c73; font-size: 16px; font-weight: 650; }
+.fund-wallet-row { display: flex; width: 100%; min-height: 92px; align-items: center; gap: 17px; padding: 0 23px; border-radius: 22px; color: #292a2f; background: #f1f1f3; text-align: left; cursor: pointer; }
+.fund-wallet-row strong { flex: 1; font-size: 20px; font-weight: 650; letter-spacing: -.03em; }
+.fund-wallet-row b { color: #74757c; font-size: 37px; font-weight: 400; line-height: 1; }
+.fund-google-pay { display: grid; min-width: 64px; height: 32px; place-items: center; border-radius: 16px; color: #3d4147; background: #fff; font-size: 14px; font-weight: 700; }
+.fund-wallet-options { overflow: hidden; border-radius: 22px; background: #f1f1f3; }
+.fund-wallet-options .fund-wallet-row { border-radius: 0; }
+.fund-wallet-options .fund-wallet-row + .fund-wallet-row { border-top: 1px solid #e4e4e7; }
+.fund-option-icon { display: grid; width: 48px; height: 48px; place-items: center; border-radius: 50%; color: var(--ref-blue); background: #e4e5ff; }
+.fund-option-icon .app-icon { stroke-width: 1.9; }
+
+@media (max-width: 430px) {
+  .initial-setup-welcome { padding-right: 23px; padding-left: 23px; }
+  .setup-welcome-art-space { min-height: clamp(280px, 52dvh, 500px); }
+  .setup-welcome-art-space img { max-height: 50dvh; }
+  .setup-welcome-content h1 { font-size: 30px; }
+  .setup-welcome-actions { margin-top: 42px; }
+  .setup-primary-button, .setup-secondary-button { height: 60px; font-size: 17px; }
+  .setup-terms { margin-top: 25px; font-size: 13px; }
+  .initial-setup-passcode { padding-right: 18px; padding-left: 18px; }
+  .setup-passcode-content { margin-top: clamp(132px, 21dvh, 190px); }
+  .setup-passcode-content h1 { font-size: 24px; }
+  .setup-passcode-boxes { gap: 8px; margin-top: 38px; }
+  .setup-passcode-box { width: min(13vw, 48px); height: 52px; }
+  .setup-passcode-content p { max-width: 335px; font-size: 14px; }
+  .setup-keypad { width: min(100%, 335px); gap: clamp(18px, 3.6dvh, 29px) 16px; }
+  .setup-keypad button { height: 43px; font-size: 31px; }
+  .setup-biometric-modal { padding: 33px 20px 20px; border-radius: 24px; }
+  .setup-biometric-modal h2 { font-size: 23px; }
+  .setup-biometric-illustration { width: 104px; height: 96px; margin-bottom: 14px; }
+  .setup-biometric-modal p { font-size: 15px; }
+  .initial-authentication-required { padding-right: 22px; padding-left: 22px; }
+  .authentication-required-content { padding-top: clamp(152px, 24dvh, 210px); }
+  .authentication-required-content h1 { font-size: 30px; }
+  .authentication-required-content > p { margin-top: 17px; font-size: 17px; }
+  .authentication-fingerprint { margin-bottom: 37px; }
+  .authentication-fingerprint .passcode-fingerprint-image { width: 68px; height: 68px; }
+  .notifications-art-space { min-height: clamp(290px, 46dvh, 470px); }
+  .notifications-art-space img { width: min(100%, 175px); max-height: 205px; }
+  .notifications-content h1 { font-size: 30px; }
+  .notifications-content > p { font-size: 16px; }
+  .notification-permission-dialog { padding: 27px 20px 20px; border-radius: 25px; }
+  .notification-permission-dialog h2 { margin-top: 19px; font-size: 20px; }
+  .notification-permission-dialog button { min-height: 55px; font-size: 17px; }
+  .setup-authentication-trust-mark { bottom: calc(56dvh - 47px); width: 94px; height: 94px; }
+  .setup-authentication-trust-mark .auth-trust-mark, .setup-authentication-trust-mark .auth-trust-mark img { width: 94px; height: 94px; }
+  .setup-authentication-sheet { min-height: 400px; padding: 34px 24px calc(19px + env(safe-area-inset-bottom)); }
+  .setup-authentication-sheet h1 { font-size: 30px; }
+  .setup-authentication-sheet > p { font-size: 17px; }
+  .fund-wallet-screen { padding-right: 20px; padding-left: 20px; }
+  .fund-wallet-section { margin-top: 46px; }
+  .fund-wallet-row { min-height: 84px; padding: 0 20px; }
+  .fund-wallet-row strong { font-size: 18px; }
+}

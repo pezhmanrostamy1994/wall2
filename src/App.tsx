@@ -353,10 +353,15 @@ const persistedWalletsKey = 'trust-wallet-dashboard:wallets:v2'
 const persistedDeletedWalletsKey = 'trust-wallet-dashboard:deleted-wallets:v1'
 const selectedWalletStorageKey = 'trust-wallet-dashboard:selected-wallet:v1'
 const unlockedSessionKey = 'trust-wallet-dashboard:unlocked-session:v1'
+const initialSetupCompletedStorageKey = 'trust-wallet-dashboard:initial-setup-completed:v2'
+const passcodeStorageKey = 'trust-wallet-dashboard:passcode:v1'
 const walletHistoryStorageKey = 'trust-wallet-dashboard:history:v1'
 const manualBackupStatusStorageKey = 'trust-wallet-dashboard:manual-backup-status:v1'
 const manualBackupVerificationStorageKey = 'trust-wallet-dashboard:manual-backup-verification:v1'
 const configuredWalletIds = new Set(walletDefinitions.map((wallet) => wallet.id))
+// Wallets bundled by earlier releases must not be restored from local storage
+// after the default wallet list has been removed.
+const removedDefaultWalletIds = new Set(Array.from({ length: 11 }, (_, index) => `wallet-${String(index + 1).padStart(2, '0')}`))
 
 type WalletHistoryDirection = 'send' | 'receive'
 type WalletHistoryEntry = {
@@ -527,7 +532,7 @@ function readPersistedWallets() {
     const customWallets: WalletDefinition[] = []
     stored.wallets.forEach((value) => {
       const wallet = readCustomWallet(value)
-      if (!wallet || configuredWalletIds.has(wallet.id) || existingIds.has(wallet.id)) return
+      if (!wallet || configuredWalletIds.has(wallet.id) || removedDefaultWalletIds.has(wallet.id) || existingIds.has(wallet.id)) return
       existingIds.add(wallet.id)
       customWallets.push(restoreWallet(wallet, storedBalances[wallet.id], storedNames[wallet.id]))
     })
@@ -688,7 +693,7 @@ function readSelectedWalletId(wallets: WalletDefinition[]) {
   } catch {
     // Fall back to the first configured wallet when storage is unavailable.
   }
-  return wallets[0]?.id ?? walletDefinitions[0].id
+  return wallets[0]?.id ?? ''
 }
 
 function isSessionUnlocked() {
@@ -704,6 +709,38 @@ function persistUnlockedSession() {
     window.sessionStorage.setItem(unlockedSessionKey, '1')
   } catch {
     // Session unlock still works until the next refresh if storage is unavailable.
+  }
+}
+
+function hasInitialSetupCompleted() {
+  try {
+    return window.localStorage.getItem(initialSetupCompletedStorageKey) === '1'
+  } catch {
+    return false
+  }
+}
+
+function persistInitialSetupComplete() {
+  try {
+    window.localStorage.setItem(initialSetupCompletedStorageKey, '1')
+  } catch {
+    // The setup remains complete for the current session when storage is unavailable.
+  }
+}
+
+function persistPasscode(passcode: string) {
+  try {
+    window.localStorage.setItem(passcodeStorageKey, passcode)
+  } catch {
+    // The passcode remains available for the current setup flow when storage is unavailable.
+  }
+}
+
+function readPersistedPasscode() {
+  try {
+    return window.localStorage.getItem(passcodeStorageKey) ?? ''
+  } catch {
+    return ''
   }
 }
 
@@ -2226,6 +2263,116 @@ function MarketDetail({ asset, onBack, onTransfer }: { asset: MarketAsset; onBac
   return <section className="detail-screen"><header className="detail-heading"><button className="back-circle" onClick={onBack} aria-label="Back">‹</button><button className="favorite-button" aria-label="Add to favorites"><Icon name="star" size="md" /></button></header><div className="detail-identity"><CryptoMark asset={asset} large /><div><strong>{asset.base}</strong><span>{asset.name}</span></div><div className="detail-price"><strong>{formatUsd(currentPrice)}</strong><span className={positive ? 'positive-text' : 'negative-text'}>{changeValue !== null ? `${changeValue >= 0 ? '+' : '-'}${formatUsd(Math.abs(changeValue))} ` : ''}({formatPercent(change)})</span></div></div><div className="detail-chart-wrap">{loading && !points ? <div className="detail-chart-loading">Loading live chart…</div> : <MarketChart points={points} positive={positive} />}</div><div className="range-tabs">{['LIVE', '1m', '1H', '1D', '1W', '1M'].map((item) => <button className={item === '1H' ? 'active' : ''} key={item}>{item}</button>)}<Icon name="activity" size="md" /></div>{chartError && <span className="chart-note">Chart temporarily unavailable · showing cached data when available</span>}<div className="balance-block"><div><strong>Your balance</strong><span>{formatUsd(balanceValue)}</span></div><small>{formatTokenBalance(tokenBalance)} {asset.base}</small></div><div className="detail-actions"><button type="button" onClick={() => onTransfer('send', asset)}><Icon name="scan" size="md" />Send</button><button type="button" onClick={() => onTransfer('receive', asset)}><Icon name="qr" size="md" />Receive</button></div><section className="ai-summary"><h2>✦ AI Summary</h2><p>{asset.name} is a decentralised digital asset traded on global markets. Its price and chart above are updated from live market data.</p><button>Ask AI <span>›</span></button></section><div className="trade-ticker">0xb0...067d sold <b>$3.50 {asset.base}</b> ↘</div><button className="trade-cta"><Icon name="refresh" size="md" />Trade</button></section>
 }
 
+type InitialSetupStep = 'welcome' | 'create-passcode' | 'confirm-passcode' | 'authentication-required' | 'enter-passcode' | 'notifications' | 'wallet-ready' | 'fund-wallet'
+
+function SetupStepRedirect({ onRedirect }: { onRedirect: () => void }) {
+  useEffect(() => {
+    onRedirect()
+  }, [onRedirect])
+  return null
+}
+
+function InitialSetup({ onEnterApp }: { onEnterApp: () => void }) {
+  const [step, setStep] = useState<InitialSetupStep>('welcome')
+  const [passcode, setPasscode] = useState('')
+  const [createdPasscode, setCreatedPasscode] = useState('')
+  const [hasPasscodeMismatch, setHasPasscodeMismatch] = useState(false)
+  const [showBiometricPrompt, setShowBiometricPrompt] = useState(false)
+  const [showNotificationPermission, setShowNotificationPermission] = useState(false)
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const authenticationTimer = useRef<ReturnType<typeof window.setTimeout> | null>(null)
+  const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+  const isPasscodeStep = step !== 'welcome'
+  const isConfirming = step === 'confirm-passcode'
+
+  useEffect(() => () => {
+    if (authenticationTimer.current !== null) window.clearTimeout(authenticationTimer.current)
+  }, [])
+
+  const addDigit = (digit: string) => {
+    if (hasPasscodeMismatch) return
+    const next = `${passcode}${digit}`.slice(0, 6)
+    setPasscode(next)
+    if (next.length !== 6) return
+    if (!isConfirming) {
+      window.setTimeout(() => {
+        setCreatedPasscode(next)
+        setPasscode('')
+        setStep('confirm-passcode')
+      }, 140)
+      return
+    }
+    if (next !== createdPasscode) {
+      setHasPasscodeMismatch(true)
+      window.setTimeout(() => {
+        setPasscode('')
+        setHasPasscodeMismatch(false)
+      }, 420)
+      return
+    }
+    window.setTimeout(() => setShowBiometricPrompt(true), 140)
+  }
+
+  const goBack = () => {
+    setPasscode('')
+    setHasPasscodeMismatch(false)
+    setStep(step === 'confirm-passcode' ? 'create-passcode' : 'welcome')
+  }
+
+  const beginAuthentication = () => {
+    if (isAuthenticating) return
+    setIsAuthenticating(true)
+    authenticationTimer.current = window.setTimeout(() => {
+      authenticationTimer.current = null
+      setStep('notifications')
+    }, 500)
+  }
+
+  const cancelAuthentication = () => {
+    if (authenticationTimer.current !== null) window.clearTimeout(authenticationTimer.current)
+    authenticationTimer.current = null
+    setIsAuthenticating(false)
+  }
+
+  const addLoginPasscodeDigit = (digit: string) => {
+    if (hasPasscodeMismatch) return
+    const next = `${passcode}${digit}`.slice(0, 6)
+    setPasscode(next)
+    if (next.length !== 6) return
+    if (next === readPersistedPasscode()) {
+      window.setTimeout(() => setStep('notifications'), 140)
+      return
+    }
+    setHasPasscodeMismatch(true)
+    window.setTimeout(() => {
+      setPasscode('')
+      setHasPasscodeMismatch(false)
+    }, 420)
+  }
+
+  // The fingerprint-authentication sheet is no longer part of this flow.
+  if (step === 'authentication-required') return <SetupStepRedirect onRedirect={() => { setPasscode(''); setStep('enter-passcode') }} />
+
+  if (step === 'authentication-required') return <main className="initial-setup setup-authentication-required"><div className="setup-authentication-trust-mark" aria-hidden="true"><TrustWalletGreenMark /></div><section className="setup-authentication-sheet"><h1>Authentication required</h1><p>Trust Wallet</p><button type="button" className={`authentication-fingerprint${isAuthenticating ? ' authenticating' : ''}`} onPointerDown={beginAuthentication} onPointerUp={cancelAuthentication} onPointerCancel={cancelAuthentication} onPointerLeave={cancelAuthentication} aria-label="Touch and hold the fingerprint sensor"><span>Touch the fingerprint sensor</span><PasscodeFingerprintImage /></button><button type="button" className="authentication-pin-button" onClick={() => { setPasscode(''); setStep('enter-passcode') }}>PIN</button></section></main>
+
+  if (step === 'enter-passcode') return <main className="initial-setup initial-setup-passcode setup-enter-passcode"><button type="button" className="setup-back-button" onClick={() => setStep('authentication-required')} aria-label="Back"><BackArrowIcon /></button><section className="setup-passcode-content"><h1>Enter passcode</h1><div className={`setup-passcode-boxes${hasPasscodeMismatch ? ' error' : ''}`} aria-label="Passcode progress">{Array.from({ length: 6 }).map((_, index) => <span className="setup-passcode-box" key={index}>{index < passcode.length && <i aria-hidden="true" />}</span>)}</div><button type="button" className="setup-use-touch-id"><PasscodeFingerprintImage />Use Touch Id</button></section><div className="setup-keypad">{digits.map((digit) => <button type="button" key={digit} onClick={() => addLoginPasscodeDigit(digit)} aria-label={`Number ${digit}`}>{digit}</button>)}<span aria-hidden="true" /><button type="button" onClick={() => addLoginPasscodeDigit('0')} aria-label="Number 0">0</button><button type="button" className="setup-keypad-delete" onClick={() => setPasscode((current) => current.slice(0, -1))} aria-label="Delete passcode"><span className="backspace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path className="backspace-shape" d="M21.5 3.5H7.7c-.62 0-1.2.31-1.53.82L1.58 11.6a.75.75 0 0 0 0 .8l4.59 7.28c.33.51.91.82 1.53.82h13.8c.83 0 1.5-.67 1.5-1.5V5c0-.83-.67-1.5-1.5-1.5Z" /><path className="backspace-close" d="m10.7 8.8 5.6 6.4m0-6.4-5.6 6.4" /></svg></span></button></div></main>
+
+  if (step === 'fund-wallet') return <main className="initial-setup fund-wallet-screen"><header className="fund-wallet-header"><button type="button" onClick={onEnterApp} aria-label="Back"><BackArrowIcon /></button><h1>Fund your wallet</h1><span /></header><section className="fund-wallet-section"><h2>Recommended for you</h2><button type="button" className="fund-wallet-row"><span className="fund-google-pay">G Pay</span><strong>Google Pay</strong><b>›</b></button></section><section className="fund-wallet-section"><h2>All options</h2><div className="fund-wallet-options"><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="wallet" size={22} /></span><strong>All payment methods</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="swap" size={22} /></span><strong>Exchange</strong><b>›</b></button><button type="button" className="fund-wallet-row"><span className="fund-option-icon"><Icon name="qr" size={22} /></span><strong>Crypto wallet</strong><b>›</b></button></div></section></main>
+
+  if (step === 'wallet-ready') return <main className="initial-setup"><WalletReadyScreen onContinue={onEnterApp} onFund={() => setStep('fund-wallet')} /></main>
+
+  if (step === 'notifications') return <main className="initial-setup initial-notifications"><section className="notifications-content"><div className="notifications-art-space"><img src="/keep_up.png" alt="" /></div><h1>Keep up with the market!</h1><p>Turn on notifications to keep track of prices<br />and receive transaction updates.</p><div><button type="button" className="setup-primary-button" onClick={() => setShowNotificationPermission(true)}>Enable Notifications</button><button type="button" className="notifications-skip" onClick={() => setStep('wallet-ready')}>Skip, I&apos;ll do it later</button></div>{showNotificationPermission && <div className="notification-permission-overlay" role="dialog" aria-modal="true" aria-labelledby="notification-permission-title"><section className="notification-permission-dialog"><span className="notification-permission-icon"><RiNotification3Line aria-hidden="true" /></span><h2 id="notification-permission-title">Allow Trust Wallet to send you notifications?</h2><button type="button" className="notification-permission-allow" onClick={() => setStep('wallet-ready')}>ALLOW</button><button type="button" className="notification-permission-deny" onClick={() => setStep('wallet-ready')}>DON&apos;T ALLOW</button></section></div>}</section></main>
+
+  if (!isPasscodeStep) return <main className="initial-setup initial-setup-welcome"><section className="setup-welcome-content"><div className="setup-welcome-art-space"><img src="/start.png" alt="" /></div><h1>Unlock opportunities<br />across 100+ chains</h1><div className="setup-welcome-actions"><button type="button" className="setup-primary-button" onClick={() => setStep('create-passcode')}>Create new wallet</button><button type="button" className="setup-secondary-button" onClick={() => setStep('create-passcode')}>I already have a wallet</button></div><p className="setup-terms">By tapping any button you agree and consent to our<br /><span>Terms of Service</span> and <span>Privacy Policy</span>.</p></section></main>
+
+  const title = isConfirming ? 'Confirm password' : 'create passcode'
+  const instruction = isConfirming
+    ? 'Re-ener your passcode. Be sure to remember it so you can unlock your wallet.'
+    : 'Enter your passcode. Be sure to remember it so you can unlock your wallet.'
+
+  return <main className="initial-setup initial-setup-passcode"><button type="button" className="setup-back-button" onClick={goBack} aria-label="Back"><BackArrowIcon /></button><section className="setup-passcode-content"><h1>{title}</h1><div className={`setup-passcode-boxes${passcode.length === 6 ? ' complete' : ''}${hasPasscodeMismatch ? ' error' : ''}`} aria-label="Passcode progress">{Array.from({ length: 6 }).map((_, index) => <span className="setup-passcode-box" key={index}>{index < passcode.length && <i aria-hidden="true" />}</span>)}</div><p>{instruction}</p></section><div className="setup-keypad">{digits.map((digit) => <button type="button" key={digit} onClick={() => addDigit(digit)} aria-label={`Number ${digit}`}>{digit}</button>)}<button type="button" className="setup-keypad-fingerprint" disabled aria-disabled="true" aria-label="Fingerprint sign-in unavailable"><PasscodeFingerprintImage /></button><button type="button" onClick={() => addDigit('0')} aria-label="Number 0">0</button><button type="button" className="setup-keypad-delete" onClick={() => setPasscode((current) => current.slice(0, -1))} aria-label="Delete passcode"><span className="backspace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path className="backspace-shape" d="M21.5 3.5H7.7c-.62 0-1.2.31-1.53.82L1.58 11.6a.75.75 0 0 0 0 .8l4.59 7.28c.33.51.91.82 1.53.82h13.8c.83 0 1.5-.67 1.5-1.5V5c0-.83-.67-1.5-1.5-1.5Z" /><path className="backspace-close" d="m10.7 8.8 5.6 6.4m0-6.4-5.6 6.4" /></svg></span></button></div>{showBiometricPrompt && <div className="setup-biometric-overlay" role="dialog" aria-modal="true" aria-labelledby="biometric-login-title"><section className="setup-biometric-modal"><img className="setup-biometric-illustration" src="/biometric2.png" alt="" /><h2 id="biometric-login-title">Biometric Login</h2><p>Scan your fingerprint or face for secure<br />and convenient access to your account.</p><div><button type="button" className="setup-biometric-deny" onClick={() => setShowBiometricPrompt(false)}>Deny</button><button type="button" className="setup-biometric-confirm" onClick={() => { persistPasscode(passcode); setShowBiometricPrompt(false); setStep('authentication-required') }}>Confirm</button></div></section></div>}</main>
+}
+
 function LegacyLockScreen({ onUnlock }: { onUnlock: () => void }) {
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [isHolding, setIsHolding] = useState(false)
@@ -2292,7 +2439,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
     const next = `${passcode}${digit}`.slice(0, 6)
     setPasscode(next)
     if (next.length !== 6) return
-    if (next === '351213') {
+    if (next === readPersistedPasscode() && Boolean(next)) {
       window.setTimeout(onUnlock, 240)
       return
     }
@@ -2510,13 +2657,13 @@ function WalletReadyConfetti() {
   return <canvas ref={canvasRef} className="wallet-ready-confetti" aria-hidden="true" />
 }
 
-function WalletReadyScreen({ onContinue }: { onContinue: () => void }) {
+function WalletReadyScreen({ onContinue, onFund = onContinue }: { onContinue: () => void; onFund?: () => void }) {
   return <section className="wallet-ready-screen" aria-labelledby="wallet-ready-title">
     <WalletReadyConfetti />
     <button type="button" className="wallet-ready-skip" onClick={onContinue}>Skip</button>
     <div className="wallet-ready-art"><img className="wallet-ready-illustration" src="/illustration-2-wallet.svg" alt="" /><span className="wallet-ready-bug-trail" aria-hidden="true"><i /><i /><i /><i /></span><span className="wallet-ready-bug-orbit" aria-hidden="true"><img src="/illustration-1-bow-1.svg" alt="" /></span></div>
     <div className="wallet-ready-copy"><h1 id="wallet-ready-title">Brilliant! your wallet is ready!</h1><p>Add funds to get started</p></div>
-    <button type="button" className="wallet-ready-fund" onClick={onContinue}>Fund your wallet</button>
+    <button type="button" className="wallet-ready-fund" onClick={onFund}>Fund your wallet</button>
   </section>
 }
 
@@ -2816,12 +2963,18 @@ function DeviceScanner({ onClose }: { onClose: () => void }) {
 }
 
 function App() {
-  const [isLocked, setIsLocked] = useState(() => !isSessionUnlocked())
+  const [isLocked, setIsLocked] = useState(() => hasInitialSetupCompleted() && !isSessionUnlocked())
+  const [isInitialSetupComplete, setIsInitialSetupComplete] = useState(() => hasInitialSetupCompleted())
   const [promoIndex, setPromoIndex] = useState(0)
   const [isScannerOpen, setIsScannerOpen] = useState(false)
   const [location, setLocation] = useState<AppLocation>(() => readAppLocation())
-  const [wallets, setWallets] = useState<WalletDefinition[]>(() => readWalletsWithHistory())
-  const [selectedWalletId, setSelectedWalletId] = useState(() => readSelectedWalletId(readWalletsWithHistory()))
+  const [wallets, setWallets] = useState<WalletDefinition[]>(() => {
+    const savedWallets = readWalletsWithHistory()
+    // Earlier setup versions could mark onboarding complete before creating the
+    // user's first wallet. Repair that saved state on the next app load.
+    return hasInitialSetupCompleted() && !savedWallets.length ? [createNewWallet(savedWallets)] : savedWallets
+  })
+  const [selectedWalletId, setSelectedWalletId] = useState(() => readSelectedWalletId(wallets))
   const [walletHistory, setWalletHistory] = useState<WalletHistoryEntry[]>(() => readWalletHistory(readPersistedWallets()))
   const [walletChanges, setWalletChanges] = useState<Record<string, number | null>>(() => readCachedWalletQuoteValues().changes)
   const [walletPrices, setWalletPrices] = useState<Record<string, number>>(() => readCachedWalletQuoteValues().prices)
@@ -2838,17 +2991,17 @@ function App() {
   }
   const goBack = (fallbackPathname: string) => navigate(navigationState?.returnTo ?? fallbackPathname)
   const selectedWallet = wallets.find((wallet) => wallet.id === selectedWalletId) ?? wallets[0]
-  const activeWalletTokens = getWalletTokens(selectedWallet)
+  const activeWalletTokens = selectedWallet ? getWalletTokens(selectedWallet) : []
   const walletPortfolioTokens = activeWalletTokens
   const bitcoinToken = activeWalletTokens.find((token) => token.symbol === 'BTC') ?? activeWalletTokens[0]
   const ethereumToken = activeWalletTokens.find((token) => token.symbol === 'ETH') ?? activeWalletTokens[0]
   const receiveToken = activeWalletTokens.find((token) => token.symbol === 'USDT') ?? activeWalletTokens[0]
-  const usdtValue = getWalletTokenValue(receiveToken, walletPrices)
+  const usdtValue = receiveToken ? getWalletTokenValue(receiveToken, walletPrices) : 0
   const usdtChange = walletChanges.USDT ?? 0
   const usdtChangeValue = usdtValue * (usdtChange / 100)
   const latestSearchAssetBySymbol = new Map(searchableAssets.map((asset) => [asset.symbol, asset]))
   const homeWatchlistAssets = watchlistAssets.map((asset) => latestSearchAssetBySymbol.get(asset.symbol) ?? asset)
-  const routeAsset = route.symbol ? createRouteAsset(route.symbol, navigationState, activeWalletTokens, walletPrices, walletChanges) : null
+  const routeAsset = selectedWallet && route.symbol ? createRouteAsset(route.symbol, navigationState, activeWalletTokens, walletPrices, walletChanges) : null
   const selectedMarket = route.kind === 'asset' ? routeAsset : null
   const transferFlow = (route.kind === 'send' || route.kind === 'receive') && routeAsset ? { mode: route.kind, asset: routeAsset } : null
   const activeTab: 'home' | 'markets' | 'perps' | 'discover' = route.kind === 'markets' || route.kind === 'perps' || route.kind === 'discover' ? route.kind : 'home'
@@ -3045,7 +3198,18 @@ function App() {
     }
   }, [isLocked, searchableAssets])
 
+  if (!isInitialSetupComplete) return <InitialSetup onEnterApp={() => { if (!wallets.length) addNewWallet(); persistInitialSetupComplete(); persistUnlockedSession(); setIsInitialSetupComplete(true) }} />
+
   if (isLocked) return <LockScreen onUnlock={() => { persistUnlockedSession(); setIsLocked(false); if (route.kind === 'unlock') navigate('/') }} />
+
+  // This is only a defensive fallback for unavailable browser storage; normal
+  // startup always creates a first wallet before reaching the main app.
+  if (!selectedWallet) return null
+
+  // Every wallet contains entries for all configured tokens.
+  const readyReceiveToken = receiveToken as WalletToken
+  const readyBitcoinToken = bitcoinToken as WalletToken
+  const readyEthereumToken = ethereumToken as WalletToken
 
   if (route.kind === 'settings') {
     return <main className="app-shell light-app-shell"><div className="wallet-app light-wallet-app"><SettingsScreen onClose={() => goBack('/')} /></div></main>
@@ -3124,8 +3288,8 @@ function App() {
           <h1 id="home-balance-title">{formatUsd(usdtValue)}</h1>
           <p>{formatUsd(Math.abs(usdtChangeValue))} ({formatPercent(usdtChange)})</p>
           <div className="home-balance-actions">
-            <button type="button" className="home-balance-action" onClick={() => openTransfer('send', walletTokenToMarketAsset(receiveToken, walletPrices, walletChanges))}><span className="home-balance-action-icon-wrap"><HomeTransferArrow direction="send" /></span><strong>Send</strong></button>
-            <button type="button" className="home-balance-action" onClick={() => openTransfer('receive', walletTokenToMarketAsset(receiveToken, walletPrices, walletChanges))}><span className="home-balance-action-icon-wrap"><HomeTransferArrow direction="receive" /></span><strong>Receive</strong></button>
+            <button type="button" className="home-balance-action" onClick={() => openTransfer('send', walletTokenToMarketAsset(readyReceiveToken, walletPrices, walletChanges))}><span className="home-balance-action-icon-wrap"><HomeTransferArrow direction="send" /></span><strong>Send</strong></button>
+            <button type="button" className="home-balance-action" onClick={() => openTransfer('receive', walletTokenToMarketAsset(readyReceiveToken, walletPrices, walletChanges))}><span className="home-balance-action-icon-wrap"><HomeTransferArrow direction="receive" /></span><strong>Receive</strong></button>
             <button type="button" className="home-balance-action swap" onClick={() => navigate('/swap', { returnTo: '/' })}><span className="home-balance-action-icon-wrap"><HomeSwapIcon /></span><strong>Swap</strong></button>
             <button type="button" className="home-balance-action" onClick={() => navigate('/markets', { returnTo: '/' })}><span className="home-balance-action-icon-wrap"><HomeBuyIcon /></span><strong>Buy</strong></button>
           </div>
@@ -3148,12 +3312,12 @@ function App() {
           <button type="button" className="home-section-heading" onClick={() => navigate('/perps')} aria-label="Open Perps"><span>Perps</span><Icon name="chevron" size={25} /></button>
           <div className="perps-card-row">
             <article className="perps-card">
-              <div className="perps-card-icon"><TokenMark token={bitcoinToken} /></div>
+              <div className="perps-card-icon"><TokenMark token={readyBitcoinToken} /></div>
               <div className="perps-card-title"><strong>BTC</strong><span>40x</span></div>
               <span className="perps-volume">$1.82B Vol</span>
             </article>
             <article className="perps-card">
-              <div className="perps-card-icon"><TokenMark token={ethereumToken} /></div>
+              <div className="perps-card-icon"><TokenMark token={readyEthereumToken} /></div>
               <div className="perps-card-title"><strong>ETH</strong><span>25x</span></div>
               <span className="perps-volume">$805.22M Vol</span>
             </article>
