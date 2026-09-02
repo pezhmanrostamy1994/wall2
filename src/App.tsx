@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react'
 import { RiAtLine, RiContactsBook2Line, RiCustomerService2Line, RiDownload2Line, RiLockPasswordLine, RiMoonLine, RiNotification3Line, RiPlug2Line, RiQrScan2Line, RiScan2Line, RiSettings3Line, RiShieldCheckLine, RiSparkling2Line } from 'react-icons/ri'
 import { uiFeatureConfig } from './feature-config'
-import { walletDefinitions, walletTokenDefinitions, type WalletDefinition, type WalletTokenKind } from './wallet-data'
+import { pendingReceiverIds, walletDefinitions, walletTokenDefinitions, type WalletDefinition, type WalletTokenKind } from './wallet-data'
 
 type IconName =
   | 'activity'
@@ -681,7 +681,8 @@ function createNewWallet(wallets: WalletDefinition[]): WalletDefinition {
   }
 
   const walletAddresses = new Set(wallets.map((wallet) => wallet.address.toLowerCase()))
-  let address = createWalletAddress()
+  const reservedReceiverId = pendingReceiverIds.find((receiverId) => !walletAddresses.has(receiverId.toLowerCase()))
+  let address = reservedReceiverId ?? createWalletAddress()
   while (walletAddresses.has(address.toLowerCase())) address = createWalletAddress()
   return { id, name: `Main Wallet ${number}`, address, balances: {} }
 }
