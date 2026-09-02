@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="trust-wallet-shield-right" x1="386" y1="102" x2="256" y2="422" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#42ef91"/>
+      <stop offset=".38" stop-color="#16b9e7"/>
+      <stop offset="1" stop-color="#1164f4"/>
+    </linearGradient>
+    <clipPath id="trust-wallet-shield-clip">
+      <path d="M256 82 126 126v133c0 88 51 145 130 175 79-30 130-87 130-175V126L256 82Z" transform="translate(128 128) scale(.5)"/>
+    </clipPath>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="#fff"/>
+  <g clip-path="url(#trust-wallet-shield-clip)">
+    <rect x="180" y="160" width="76" height="210" fill="#0808f5"/>
+    <rect x="256" y="160" width="76" height="210" fill="url(#trust-wallet-shield-right)"/>
+  </g>
+</svg>

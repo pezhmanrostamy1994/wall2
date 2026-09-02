@@ -1,0 +1,2650 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, "Segoe UI", Arial, sans-serif;
+  --top-control-size: 66px;
+  --font-size-header: 20px;
+  --font-size-subheading: 18px;
+  --font-size-body: 14px;
+  --font-size-caption: 12px;
+  color: #f4f4f5;
+  background: #e5e5e7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: #18191a; }
+button { border: 0; color: inherit; font: inherit; cursor: default; -webkit-tap-highlight-color: transparent; }
+
+.lock-screen { display: grid; width: 100%; height: 100dvh; min-height: 0; place-items: center; overflow: hidden; padding: 32px 24px; color: #f4f4f5; background: #18191a; }
+.lock-screen-content { display: flex; width: min(100%, 360px); flex-direction: column; align-items: center; text-align: center; }
+.lock-brand { display: grid; width: 78px; height: 78px; place-items: center; margin-bottom: 22px; border-radius: 25px; background: #292a2c; box-shadow: 0 18px 45px rgba(0,0,0,.22); }
+.lock-brand .wallet-glyph { width: 54px; height: 54px; flex-basis: 54px; border-radius: 17px; }
+.lock-eyebrow { margin: 0 0 10px; color: #929399; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.lock-screen h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -.04em; }
+.lock-caption { margin: 9px 0 28px; color: #929399; font-size: 15px; }
+.fingerprint-button { position: relative; display: grid; width: 126px; height: 126px; place-items: center; border: 1px solid rgba(55,238,144,.45); border-radius: 50%; color: #37ee90; background: rgba(55,238,144,.08); box-shadow: 0 0 0 11px rgba(55,238,144,.035), 0 15px 40px rgba(0,0,0,.2); cursor: pointer; touch-action: none; transition: transform .2s ease, background .2s ease, box-shadow .2s ease, color .2s ease; }
+.fingerprint-button::before { content: ''; position: absolute; inset: -9px; border: 2px solid rgba(55,238,144,.28); border-radius: 50%; opacity: 0; transform: scale(.82); pointer-events: none; }
+.fingerprint-button:hover { background: rgba(55,238,144,.15); transform: scale(1.03); }
+.fingerprint-button.holding { color: #baffdd; background: rgba(55,238,144,.19); box-shadow: 0 0 0 11px rgba(55,238,144,.06), 0 0 34px rgba(55,238,144,.42), 0 15px 40px rgba(0,0,0,.24); transform: scale(1.04); }
+.fingerprint-button.holding::before { opacity: 1; animation: hold-pulse 1s ease-in-out infinite; }
+.fingerprint-button.unlocking { color: #d8ffeb; background: rgba(55,238,144,.3); box-shadow: 0 0 0 16px rgba(55,238,144,.08), 0 0 48px rgba(55,238,144,.7); }
+.fingerprint-button:active { transform: scale(.97); }
+.fingerprint-button svg { stroke-width: 1.45; }
+.lock-hint { margin-top: 22px; color: #8c8d92; font-size: 13px; }
+.lock-footer { position: fixed; bottom: 25px; display: inline-flex; align-items: center; gap: 6px; color: #67686c; font-size: 11px; }
+
+@keyframes hold-pulse {
+  0%, 100% { opacity: .45; transform: scale(.82); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.app-shell { min-height: 100vh; display: flex; justify-content: center; }
+.wallet-app { position: relative; width: min(100%, 591px); min-height: 100vh; padding: 26px 24px 155px; overflow-x: hidden; background: #18191a; }
+
+.wallet-header, .header-actions, .wallet-chip, .wallet-chip-copy, .limit-banner, .token-leading, .token-price, .bottom-dock, .nav-pill { display: flex; align-items: center; }
+
+.wallet-header { justify-content: space-between; padding-top: 16px; }
+.wallet-chip { width: 158px; min-width: 158px; height: 66px; gap: 11px; padding: 8px 17px 8px 9px; border: 1px solid #3b3c3e; border-radius: 34px; background: rgba(24,25,26,.38); cursor: pointer; }
+.wallet-glyph { display: grid; width: 48px; height: 48px; place-items: center; flex: 0 0 48px; border-radius: 16px; color: #fff; background: #37ee90; box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 0 18px rgba(55,238,144,.18); }
+.wallet-glyph img { display: block; width: 78%; height: 78%; object-fit: contain; }
+.wallet-header-wallet-icon { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; color: var(--light-ink); }
+.wallet-header-wallet-icon .app-icon { width: 22px !important; height: 22px !important; stroke-width: 2; }
+.wallet-header-wallet-icon img { display: block; width: 32px; height: 32px; object-fit: contain; }
+.wallet-chip-copy { flex-direction: column; align-items: flex-start; gap: 1px; }
+.wallet-chip .wallet-glyph { border-radius: 50%; }
+.wallet-chip-copy { min-width: 0; }
+.wallet-chip-copy strong { overflow: hidden; max-width: 100%; font-size: 20px; font-weight: 600; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.wallet-chip-copy span { color: #a4a4a8; font-size: 11px; font-weight: 500; }
+.header-actions { gap: 12px; }
+.round-button { display: grid; width: var(--top-control-size); height: var(--top-control-size); place-items: center; border: 1px solid #37383a; border-radius: 50%; color: #e5e5e7; background: rgba(24,25,26,.4); }
+.round-button svg { stroke-width: 1.75; }
+
+.limit-banner { height: 91px; gap: 12px; margin-top: 27px; padding: 0 15px; border: 1px solid #4e5052; border-radius: 21px; background: rgba(24,25,26,.62); }
+.banner-indicators { display: flex; width: 5px; height: 32px; flex: 0 0 5px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.banner-indicator { display: block; width: 4px; height: 10px; border-radius: 4px; background: #77797e; opacity: .72; transition: height .35s ease, background .35s ease, opacity .35s ease; }
+.banner-indicator.active { height: 22px; background: #f0f0f1; opacity: 1; }
+.hyperliquid-glyph { display: grid; width: 58px; height: 42px; place-items: center; flex: 0 0 58px; }
+.hyperliquid-glyph img { display: block; width: 48px; height: 35px; object-fit: contain; }
+.promo-alt-glyph { display: grid; width: 58px; height: 42px; place-items: center; flex: 0 0 58px; }
+.promo-alt-glyph svg { display: block; width: 46px; height: 34px; }
+.limit-banner .promo-slide-viewport { min-width: 0; flex: 1; height: 48px; overflow: hidden; }
+.limit-banner .promo-slide-track { display: flex; height: 48px; flex-direction: column; gap: 0; transition: transform .55s cubic-bezier(.22,.8,.24,1); will-change: transform; }
+.limit-banner .promo-slide { display: flex; height: 48px; flex: 0 0 48px; align-items: center; gap: 12px; }
+.limit-banner .promo-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; justify-content: center; gap: 3px; }
+.limit-banner strong { font-size: 19px; font-weight: 600; line-height: 1.15; white-space: nowrap; }
+.limit-banner div span { color: #a1a1a6; font-size: 15px; }
+
+.start-section { padding-top: 31px; }
+.start-section h1 { margin: 0; color: #f2f2f3; font-size: 30px; font-weight: 700; letter-spacing: -.04em; line-height: 1.28; }
+.start-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 49px; }
+.start-action { display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 13px; padding: 0; color: #efeff0; background: transparent; }
+.action-glyph { position: relative; display: grid; width: 100%; height: 99px; place-items: center; border-radius: 22px; background: #2b2c2e; }
+.qr-glyph { color: #f5f5f5; }
+.qr-glyph svg { stroke-width: 2.8; }
+.mcap-glyph { display: flex; flex-direction: row; gap: 0; color: #4c8dff; font-family: Arial, sans-serif; font-size: 35px; font-weight: 700; letter-spacing: -.12em; }
+.mcap-glyph span { align-self: flex-end; margin-bottom: 22px; font-size: 13px; letter-spacing: -.08em; }
+.binance-glyph { color: #f3bd24; }
+.binance-glyph svg { width: 36px; height: 36px; }
+.card-glyph { display: flex; align-items: center; justify-content: center; flex-direction: row; gap: 2px; }
+.card-glyph svg { width: 48px; height: 32px; }
+.card-glyph strong { font-family: Arial, sans-serif; font-size: 21px; font-weight: 500; letter-spacing: -.06em; }
+.start-action > span:last-child { min-height: 49px; font-size: 19px; font-weight: 600; line-height: 1.35; text-align: center; }
+
+.token-section { margin-top: 67px; }
+.token-section h2, .perps-section h2, .home-section-heading { display: flex; align-items: center; gap: 7px; margin: 0; color: #eeeeef; font-size: 23px; font-weight: 600; letter-spacing: -.035em; }
+.home-section-heading { padding: 0; border: 0; color: inherit; background: transparent; font: inherit; cursor: pointer; }
+.token-section h2 svg, .perps-section h2 svg, .home-section-heading svg { transform: rotate(-90deg); stroke-width: 2.25; }
+.token-list { margin-top: 27px; }
+.token-row { display: flex; width: 100%; min-height: 98px; align-items: center; justify-content: space-between; gap: 12px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.token-row:active { opacity: .65; }
+.token-leading { min-width: 0; gap: 17px; }
+.token-leading strong { overflow: hidden; color: #ececee; font-size: 20px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.token-copy { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.token-copy span { color: #929398; font-size: 16px; font-weight: 500; white-space: nowrap; }
+.token-price { flex-direction: column; align-items: flex-end; gap: 3px; }
+.token-price strong { color: #e9e9eb; font-size: 20px; font-weight: 600; white-space: nowrap; }
+.token-price span { color: #929398; font-size: 16px; font-weight: 500; white-space: nowrap; }
+.token-mark { position: relative; display: grid; width: 61px; height: 61px; place-items: center; flex: 0 0 61px; overflow: hidden; border-radius: 50%; font-family: Arial, sans-serif; font-size: 28px; font-weight: 700; }
+.token-mark img, .crypto-mark img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: cover; }
+.tether-logo { display: block; width: 72%; height: 72%; }
+.tether-network-mark { overflow: visible; }
+.tether-network-badge { position: absolute; z-index: 3; right: -3%; bottom: -3%; display: grid; width: 37%; height: 37%; place-items: center; border: 2px solid #fff; border-radius: 50%; color: #fff; background: #ef1238; }
+.tether-network-badge .tron-logo { display: block; width: 78%; height: 78%; }
+.token-mark strong { position: absolute; z-index: 0; }
+.tron-mark { color: #fff; background: #ef1238; }
+.bitcoin-mark { color: #fff; background: #f89419; }
+.bitcoin-mark strong { font-size: 35px; font-weight: 600; line-height: 1; }
+.tether-mark { color: #fff; background: #26a17b; }
+.ethereum-mark { color: #fff; background: linear-gradient(145deg, #6c92ff, #4265db); }
+.bnb-mark { color: #f4c22e; background: #050505; border: 1px solid #282828; }
+.view-all-button { display: inline-flex; width: 166px; height: 64px; align-items: center; justify-content: center; gap: 13px; margin-top: 15px; border-radius: 33px; color: #eeeeef; background: #2b2c2e; font-size: 19px; font-weight: 600; }
+.view-all-button svg { transform: rotate(-90deg); stroke-width: 2.2; }
+
+.perps-section { margin-top: 22px; padding-bottom: 11px; }
+.perps-preview { display: flex; min-height: 74px; align-items: center; gap: 12px; margin-top: 18px; padding: 10px 13px; border: 1px solid #303133; border-radius: 17px; background: #202122; }
+.perps-coin { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 50%; color: #fff; background: #f89419; font-size: 20px; font-weight: 700; }
+.perps-preview div { display: flex; flex: 1; flex-direction: column; gap: 3px; }
+.perps-preview div strong { font-size: 14px; }.perps-preview div span { color: #898a8e; font-size: 11px; }.perps-value { font-size: 13px; }
+
+.bottom-dock { position: fixed; z-index: 20; bottom: 16px; left: 50%; width: min(calc(100% - 48px), 528px); gap: 12px; transform: translateX(-50%); }
+.nav-pill { flex: 1; height: calc(var(--top-control-size) + 18px); justify-content: space-around; padding: 6px 7px; border: 1px solid rgba(101,102,105,.7); border-radius: 44px; background: linear-gradient(180deg, rgba(60,61,63,.7), rgba(31,32,34,.8)); box-shadow: 0 15px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter: blur(22px) saturate(125%); }
+.nav-item { display: grid; width: calc(var(--top-control-size) + 2px); height: calc(var(--top-control-size) + 2px); place-items: center; padding: 0; border-radius: 50%; color: #a2a2a7; background: transparent; }
+.nav-item.active { color: #fff; background: rgba(84,85,88,.78); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.nav-search { display: grid; width: var(--top-control-size); height: var(--top-control-size); flex: 0 0 var(--top-control-size); place-items: center; border: 1px solid rgba(101,102,105,.7); border-radius: 50%; color: #e3e3e6; background: linear-gradient(180deg, rgba(60,61,63,.62), rgba(31,32,34,.76)); box-shadow: 0 15px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter: blur(22px) saturate(125%); }
+
+@media (min-width: 560px) {
+  .wallet-app { min-height: 1120px; margin: 0; }
+  .bottom-dock { position: absolute; bottom: 16px; }
+}
+
+@media (max-width: 430px) {
+  :root { --top-control-size: 44px; }
+  .wallet-app { padding: 20px 18px 132px; }
+  .wallet-header { gap: 8px; }
+  .wallet-chip { width: 150px; min-width: 0; height: 44px; flex: 0 1 150px; gap: 7px; padding: 5px 10px 5px 5px; border-radius: 24px; }
+  .wallet-glyph { width: 32px; height: 32px; flex-basis: 32px; border-radius: 11px; }
+  .wallet-glyph svg { width: 21px; height: 21px; }
+  .wallet-header-wallet-icon { width: 32px; height: 32px; flex-basis: 32px; }
+  .wallet-header-wallet-icon .app-icon { width: 18px !important; height: 18px !important; }
+  .wallet-header-wallet-icon img { width: 26px; height: 26px; }
+  .wallet-chip-copy strong { font-size: 14px; }
+  .wallet-chip-copy span { font-size: 10px; }
+  .header-actions { gap: 7px; }
+  .round-button { width: var(--top-control-size); height: var(--top-control-size); }
+  .round-button svg { width: 20px; height: 20px; }
+
+  .limit-banner { height: 61px; gap: 8px; margin-top: 20px; padding: 0 10px; border-radius: 17px; }
+  .banner-indicators { width: 4px; height: 29px; flex-basis: 4px; gap: 3px; }
+  .banner-indicator { width: 3px; height: 8px; }
+  .banner-indicator.active { height: 19px; }
+  .hyperliquid-glyph { width: 40px; height: 30px; flex-basis: 40px; }
+  .hyperliquid-glyph img { width: 34px; height: 25px; }
+  .promo-alt-glyph { width: 40px; height: 30px; flex-basis: 40px; }
+  .promo-alt-glyph svg { width: 33px; height: 24px; }
+  .limit-banner .promo-slide-viewport { height: 48px; }
+  .limit-banner .promo-slide-track { height: 48px; }
+  .limit-banner .promo-slide { height: 48px; flex-basis: 48px; gap: 8px; }
+  .limit-banner strong { font-size: 14px; white-space: normal; }
+  .limit-banner div span { font-size: 12px; }
+
+  .start-section { padding-top: 25px; }
+  .start-section h1 { font-size: 27px; line-height: 1.24; }
+  .start-actions { gap: 9px; margin-top: 35px; }
+  .action-glyph { height: 66px; border-radius: 18px; }
+  .start-action { gap: 10px; }
+  .start-action > span:last-child { min-height: 44px; font-size: 16px; line-height: 1.3; }
+  .qr-glyph svg { width: 26px; height: 26px; }
+  .mcap-glyph { font-size: 29px; }
+  .mcap-glyph span { margin-bottom: 15px; font-size: 11px; }
+  .card-glyph strong { font-size: 16px; }
+
+  .token-section { margin-top: 51px; }
+  .token-section h2, .perps-section h2, .home-section-heading { gap: 6px; font-size: 21px; }
+  .token-section h2 svg, .perps-section h2 svg, .home-section-heading svg { width: 21px; height: 21px; }
+  .token-list { margin-top: 17px; }
+  .token-row { min-height: 76px; }
+  .token-leading { gap: 12px; }
+  .token-leading strong { font-size: 17px; }
+  .token-copy { gap: 3px; }
+  .token-copy span { font-size: 13px; }
+  .token-price { gap: 2px; }
+  .token-price strong { font-size: 18px; }
+  .token-price span { font-size: 13px; }
+  .token-mark { width: 49px; height: 49px; flex-basis: 49px; font-size: 25px; }
+  .bitcoin-mark strong { font-size: 28px; }
+  .view-all-button { width: 147px; height: 56px; gap: 10px; margin-top: 12px; font-size: 17px; }
+  .view-all-button svg { width: 21px; height: 21px; }
+  .perps-section { margin-top: 18px; }
+  .perps-preview { min-height: 64px; margin-top: 13px; border-radius: 15px; }
+
+  .bottom-dock { bottom: 12px; width: calc(100% - 36px); gap: 8px; }
+  .nav-pill { height: calc(var(--top-control-size) + 18px); padding: 5px 6px; }
+  .nav-item { width: calc(var(--top-control-size) + 4px); height: calc(var(--top-control-size) + 4px); }
+  .nav-search { width: calc(var(--top-control-size) + 18px); height: calc(var(--top-control-size) + 18px); flex-basis: calc(var(--top-control-size) + 18px); }
+  .nav-search svg { width: 24px; height: 24px; }
+}
+
+@media (max-width: 360px) {
+  .wallet-app { padding-right: 15px; padding-left: 15px; }
+  .wallet-chip { padding-right: 8px; }
+  .wallet-chip-copy strong { font-size: 15px; }
+  .wallet-chip-copy span { font-size: 10px; }
+  .wallet-glyph { width: 39px; height: 39px; flex-basis: 39px; }
+  .round-button { width: var(--top-control-size); height: var(--top-control-size); }
+  .round-button svg { width: 18px; height: 18px; }
+  .limit-banner { padding-right: 9px; padding-left: 9px; }
+  .limit-banner strong { font-size: 14px; }
+  .limit-banner div span { font-size: 12px; }
+  .start-section h1 { font-size: 27px; }
+  .start-action > span:last-child { font-size: 16px; }
+  .token-leading strong { font-size: 17px; }
+  .token-price strong { font-size: 18px; }
+  .token-price span { font-size: 13px; }
+  .token-mark { width: 49px; height: 49px; flex-basis: 49px; }
+}
+
+/* Markets */
+.markets-screen { min-height: calc(100vh - 30px); padding: 12px 0 90px; }
+.markets-heading, .detail-heading { display: flex; align-items: center; justify-content: space-between; }
+.markets-heading { position: relative; min-height: var(--top-control-size); justify-content: flex-end; }
+.markets-heading h1 { position: absolute; left: 50%; margin: 0; color: #f1f1f3; font-size: var(--font-size-header); font-weight: 700; letter-spacing: -.045em; line-height: 1; pointer-events: none; transform: translateX(-50%); }
+.search-circle, .back-circle, .favorite-button { display: grid; place-items: center; border-radius: 50%; color: #ededee; background: #292a2c; cursor: pointer; }
+.search-circle { width: var(--top-control-size); height: var(--top-control-size); }
+.search-circle svg, .favorite-button svg { width: 24px; height: 24px; }
+.market-search { width: 100%; height: 48px; margin-top: 14px; padding: 0 18px; border: 1px solid #414245; border-radius: 24px; outline: none; color: #fff; background: #252628; font-size: 16px; }
+.market-promos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+.market-promos button { display: flex; height: 72px; align-items: center; justify-content: center; gap: 9px; border-radius: 17px; color: #f3f3f4; background: #2a2b2d; font-size: 17px; font-weight: 600; cursor: pointer; }
+.promo-icon { color: #e7e7e8; font-size: 25px; line-height: 1; }
+.market-section-title { margin: 31px 0 14px; color: #f0f0f1; font-size: 21px; letter-spacing: -.03em; }
+.market-section-title span { color: #b5b5b8; font-weight: 500; }
+.top-traded-row { display: grid; grid-auto-columns: 174px; grid-auto-flow: column; gap: 12px; overflow-x: auto; padding-bottom: 3px; scrollbar-width: none; }
+.top-traded-row::-webkit-scrollbar { display: none; }
+.top-card { position: relative; display: flex; min-width: 0; height: 174px; flex-direction: column; align-items: flex-start; padding: 15px 15px 0; overflow: hidden; border: 0; border-radius: 20px; color: #f3f3f4; background: #2a2b2d; text-align: left; cursor: pointer; }
+.top-card-name { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 6px; color: #aaaab0; font-size: 14px; white-space: nowrap; }
+.top-card-name span { max-width: 123px; overflow: hidden; text-overflow: ellipsis; }
+.top-card > strong { margin-top: 8px; font-size: 20px; font-weight: 600; }
+.market-change { margin-top: 3px; color: #ff5970; font-size: 15px; }
+.positive-text { color: #28d78c !important; }
+.negative-text { color: #ff5970 !important; }
+.crypto-mark { position: relative; display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border-radius: 50%; color: #fff; background: var(--coin-color); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; }
+.crypto-mark.large { width: 54px; height: 54px; flex-basis: 54px; font-size: 27px; }
+.crypto-mark > span { position: absolute; z-index: 0; }
+.sparkline { position: absolute; right: 0; bottom: 0; left: 0; width: 100%; height: 57px; overflow: visible; }
+.sparkline polygon { fill: rgba(255, 76, 99, .15); }
+.sparkline polyline { fill: none; stroke: #ff516b; stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+.sparkline.positive polygon { fill: rgba(36, 214, 137, .15); }
+.sparkline.positive polyline { stroke: #29d88d; }
+.sparkline-empty { position: absolute; right: 0; bottom: 0; left: 0; height: 57px; background: linear-gradient(135deg, transparent 48%, rgba(255,255,255,.08) 49%, transparent 51%); opacity: .4; }
+.market-filters { display: flex; gap: 8px; margin: 22px 0 19px; overflow-x: auto; scrollbar-width: none; }
+.market-filters::-webkit-scrollbar { display: none; }
+.market-filters button { height: 43px; flex: 0 0 auto; padding: 0 15px; border-radius: 22px; color: #d9d9dc; background: #2a2b2d; font-size: 14px; font-weight: 600; cursor: pointer; }
+.market-filters button.selected { color: #f4f4f5; background: #686a6b; }
+.market-filters .filter-star { display: grid; width: 43px; padding: 0; place-items: center; color: #bfc0c3; }
+.market-sort { display: grid; grid-template-columns: 1fr 1.25fr .72fr; gap: 9px; margin-bottom: 16px; }
+.market-sort button { display: flex; height: 36px; align-items: center; justify-content: center; gap: 4px; min-width: 0; overflow: hidden; border-radius: 18px; color: #b8b9bd; background: #292a2c; font-size: 13px; white-space: nowrap; cursor: pointer; }
+.market-sort button svg { flex: 0 0 auto; }
+.market-sort button:nth-child(2) span { color: #8c8e92; font-size: 20px; }
+.market-list { display: flex; flex-direction: column; gap: 4px; }
+.market-row { display: grid; min-height: 78px; grid-template-columns: minmax(0, 1fr) 82px 100px; align-items: center; gap: 8px; padding: 6px 0; border: 0; color: #f1f1f3; background: transparent; text-align: left; cursor: pointer; }
+.market-row-main { display: flex; min-width: 0; flex: 1; align-items: center; gap: 12px; }
+.market-row-main > div { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.market-row-main strong { overflow: hidden; font-size: 17px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.market-row-main span { overflow: hidden; color: #8e8f94; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.market-row-chart { position: relative; display: block; width: 82px; height: 43px; overflow: hidden; }
+.market-row-chart .sparkline, .market-row-chart .sparkline-empty { position: static; display: block; width: 100%; height: 100%; }
+.market-row-price { z-index: 1; display: flex; width: 100px; flex-direction: column; align-items: flex-end; gap: 4px; padding-right: 2px; background: transparent; }
+.market-row-price strong { font-size: 16px; font-weight: 600; }
+.market-row-price span { color: #ff5970; font-size: 14px; }
+.market-error { width: 100%; margin: 0 0 10px; padding: 10px 14px; border-radius: 12px; color: #ff8796; background: rgba(255, 81, 107, .1); text-align: left; cursor: pointer; }
+.skeleton-row { height: 84px; border-radius: 14px; background: linear-gradient(90deg, #202123 25%, #292a2c 37%, #202123 63%); background-size: 400% 100%; animation: skeleton 1.35s ease infinite; }
+.market-skeleton-line, .market-skeleton-avatar, .market-skeleton-chart, .top-skeleton-chart { background: linear-gradient(90deg, #202123 25%, #292a2c 37%, #202123 63%); background-size: 400% 100%; animation: skeleton 1.35s ease infinite; }
+.top-card-skeleton { pointer-events: none; }
+.top-card-skeleton .market-skeleton-line { display: block; height: 12px; border-radius: 6px; }
+.top-skeleton-name { width: 72px; }
+.top-skeleton-price { width: 82px; margin-top: 13px; height: 18px !important; }
+.top-skeleton-change { width: 48px; margin-top: 7px; }
+.top-skeleton-chart { position: absolute; right: 8px; bottom: 8px; left: 8px; height: 42px; border-radius: 10px 10px 0 0; }
+.market-row-skeleton { pointer-events: none; }
+.market-skeleton-avatar { display: block; width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; }
+.market-skeleton-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 8px; }
+.market-skeleton-copy .market-skeleton-line { display: block; width: min(130px, 70%); height: 12px; border-radius: 6px; }
+.market-skeleton-copy .market-skeleton-line + .market-skeleton-line { width: min(88px, 48%); height: 9px; }
+.market-skeleton-chart { display: block; width: 82px; height: 36px; border-radius: 8px; }
+.market-skeleton-price { display: flex; width: 100px; flex-direction: column; align-items: flex-end; gap: 8px; }
+.market-skeleton-price .market-skeleton-line { display: block; width: 76px; height: 12px; border-radius: 6px; }
+.market-skeleton-price .market-skeleton-line + .market-skeleton-line { width: 52px; height: 9px; }
+@keyframes skeleton { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+.swap-cta, .trade-cta { display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 34px; color: #101512; background: #43f493; font-size: 20px; font-weight: 700; cursor: pointer; }
+.swap-cta { position: fixed; z-index: 19; bottom: 116px; left: 50%; width: min(calc(100% - 48px), 528px); height: 58px; transform: translateX(-50%); font-size: 18px; }
+
+/* Asset detail */
+.detail-screen { min-height: calc(100vh - 30px); padding: 19px 0 90px; }
+.detail-heading { margin-bottom: 24px; }
+.back-circle { width: var(--top-control-size); height: var(--top-control-size); font-family: Arial, sans-serif; font-size: 36px; font-weight: 300; line-height: 1; cursor: pointer; }
+.favorite-button { width: var(--top-control-size); height: var(--top-control-size); color: #43f493; background: transparent; cursor: pointer; }
+.detail-identity { display: flex; align-items: center; gap: 12px; }
+.detail-identity > div:nth-child(2) { display: flex; flex-direction: column; gap: 4px; }
+.detail-identity > div:nth-child(2) strong { font-size: 25px; letter-spacing: .02em; }
+.detail-identity > div:nth-child(2) span { color: #929398; font-size: 14px; }
+.detail-price { display: flex; margin-left: auto; flex-direction: column; align-items: flex-end; gap: 4px; }
+.detail-price strong { font-size: 29px; font-weight: 600; }
+.detail-price span { color: #29d88d; font-size: 17px; }
+.detail-chart-wrap { height: 300px; margin: 48px -6px 0; }
+.detail-chart { display: block; width: 100%; height: 100%; overflow: visible; }
+.detail-chart polygon { fill: url(#chart-fill); }
+.detail-chart polyline { fill: none; stroke: #26ce89; stroke-width: 1.7; vector-effect: non-scaling-stroke; }
+.detail-chart-loading { display: grid; height: 100%; place-items: center; color: #929398; font-size: 15px; }
+.range-tabs { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-top: 9px; color: #8f9095; }
+.range-tabs button { height: 40px; padding: 0 9px; border-radius: 20px; color: inherit; background: transparent; font-size: 15px; font-weight: 600; cursor: pointer; }
+.range-tabs button.active { color: #f1f1f2; background: #2a2b2d; }
+.range-tabs svg { margin-left: 7px; color: #dedee0; }
+.chart-note { display: block; margin-top: 9px; color: #77787d; font-size: 12px; }
+.balance-block { display: flex; margin-top: 49px; flex-direction: column; gap: 7px; }
+.balance-block div { display: flex; align-items: center; justify-content: space-between; }
+.balance-block strong { font-size: 20px; }
+.balance-block div span { font-size: 22px; font-weight: 600; }
+.balance-block small { align-self: flex-end; color: #909196; font-size: 15px; }
+.detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; margin-top: 38px; }
+.detail-actions button, .ai-summary > button { display: flex; height: 60px; align-items: center; justify-content: center; gap: 9px; border-radius: 30px; color: #e8e8e9; background: #2b2c2e; font-size: 17px; font-weight: 600; cursor: pointer; }
+.ai-summary { margin-top: 38px; }
+.ai-summary h2 { margin: 0 0 22px; font-size: 21px; font-weight: 600; }
+.ai-summary p { display: -webkit-box; margin: 0; overflow: hidden; color: #ededee; font-size: 18px; line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+.ai-summary > button { width: 142px; height: 53px; margin-top: 23px; justify-content: space-around; color: #d9d9da; font-size: 15px; }
+.ai-summary > button span { font-size: 29px; font-weight: 300; line-height: 1; }
+.trade-ticker { margin-top: 3px; color: #9a9b9f; font-size: 14px; text-align: center; }
+.trade-ticker b { color: #ff566d; font-weight: 600; }
+.trade-cta { position: fixed; z-index: 19; bottom: 15px; left: 50%; width: min(calc(100% - 48px), 495px); height: 62px; transform: translateX(-50%); font-size: 18px; }
+
+@media (max-width: 430px) {
+  .markets-screen { padding-top: 6px; }
+  .markets-heading h1 { font-size: var(--font-size-header); }
+  .search-circle { width: var(--top-control-size); height: var(--top-control-size); }
+  .search-circle svg, .favorite-button svg { width: 21px; height: 21px; }
+  .market-promos button { height: 68px; font-size: 16px; }
+  .top-traded-row { grid-auto-columns: 174px; }
+  .top-card { height: 174px; }
+  .swap-cta { bottom: 92px; width: calc(100% - 36px); height: 56px; }
+  .detail-screen { padding-top: 7px; }
+  .detail-chart-wrap { height: 278px; margin-top: 33px; }
+  .detail-price strong { font-size: 25px; }
+  .detail-price span { font-size: 15px; }
+  .range-tabs button { padding: 0 6px; font-size: 15px; }
+  .balance-block { margin-top: 38px; }
+  .detail-actions { margin-top: 31px; gap: 12px; }
+  .detail-actions button { height: 58px; font-size: 16px; }
+  .ai-summary { margin-top: 34px; }
+  .ai-summary p { font-size: 17px; }
+}
+
+/* Passcode and biometric authentication */
+.passcode-lock-screen { align-items: center; padding: 0; background: #121318; }
+.passcode-container { position: relative; display: flex; width: min(100%, 380px); height: 90vh; max-height: 700px; flex-direction: column; align-items: center; justify-content: flex-end; padding: 32px 24px; }
+.passcode-lock-screen .main-content { position: absolute; top: 28%; right: 24px; left: 24px; transform: translateY(-50%); }
+.main-content { display: flex; flex-direction: column; align-items: center; }
+.main-content h2 { color: #fff; font-size: 22px; font-weight: 600; }
+.passcode-inputs { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 0; margin-top: 36px; }
+.input-box { display: block; width: 48px; height: 52px; border: 2px solid #b8c2d1; border-radius: 5px; }
+.input-box.filled { background: rgba(255,255,255,.13); }
+.touch-id-button { display: inline-flex; align-items: center; gap: 14px; margin-top: 58px; color: #f7f7f8; background: transparent; font-size: 18px; font-weight: 600; cursor: pointer; }
+.biometric-icon { display: inline-grid; width: 28px; height: 28px; place-items: center; color: #3375ff; }
+.biometric-icon svg { width: 28px; height: 28px; stroke: currentColor; stroke-width: 1.8; }
+.keypad-container { display: grid; width: 100%; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.key { display: flex; aspect-ratio: 1; align-items: center; justify-content: center; border: 0; border-radius: 50%; color: #fff; background: #1c1e26; font-size: 26px; font-weight: 500; cursor: pointer; user-select: none; transition: background-color .15s ease, transform .1s ease; -webkit-tap-highlight-color: transparent; }
+.key:hover { background: #262936; }
+.key:active { background: #3375ff; transform: scale(.95); }
+.key-action { color: #fff; background: transparent; }
+.key-action:hover { background: transparent; }
+.key-action:active { color: #3375ff; background: transparent; }
+.fingerprint-icon { display: inline-grid; color: #3375ff; place-items: center; }
+.fingerprint-icon svg { width: 30px; height: 30px; stroke: currentColor; stroke-width: 1.8; }
+.backspace-icon { display: inline-grid; color: #fff; place-items: center; }
+
+/* Passcode light mode */
+.passcode-lock-screen { color: var(--ref-ink); background: #fff; }
+.main-content h2 { color: var(--ref-ink); }
+.input-box { border-color: var(--ref-line); background: #fff; }
+.input-box.filled { border-color: var(--ref-blue); background: rgba(21,21,244,.08); }
+.touch-id-button { color: var(--ref-ink); }
+.key { color: var(--ref-ink); background: var(--ref-surface); }
+.key:hover { background: #e7e7ea; }
+.key:active { color: #fff; background: var(--ref-blue); }
+.key-action,
+.key-action:hover,
+.key-action:active { color: var(--ref-ink); background: transparent; }
+.biometric-icon,
+.fingerprint-icon { color: var(--ref-blue); }
+.backspace-icon { color: var(--ref-ink); }
+.auth-lock-screen { align-items: flex-end; padding: 0; background: #090a0b; }
+.auth-sheet { position: relative; display: flex; width: 100%; min-height: 47vh; flex-direction: column; align-items: center; padding: 38px 26px 25px; border-radius: 28px 28px 0 0; color: #f4f5f7; background: #4b5362; text-align: center; animation: auth-sheet-rise .28s cubic-bezier(.22,.8,.24,1) both; }
+.auth-brand-mark { position: absolute; top: -35px; display: grid; width: 70px; height: 70px; place-items: center; border-radius: 20px; background: #fff; }
+.auth-brand-mark .wallet-glyph { width: 48px; height: 48px; flex-basis: 48px; border-radius: 14px; }
+.auth-sheet h1 { margin: 0; font-size: 25px; font-weight: 600; }
+.auth-sheet p { margin: 8px 0 0; font-size: 18px; }
+.auth-touch-button { position: absolute; top: 68%; display: flex; flex-direction: column; align-items: center; gap: 10px; color: #f5f6f8; background: transparent; font-size: 14px; cursor: pointer; }
+.auth-touch-button svg { color: #fff; stroke-width: 1.65; stroke-linecap: round; }
+.auth-cancel { position: absolute; bottom: 22px; left: 26px; color: #f6f7f8; background: transparent; font-size: 15px; cursor: pointer; }
+
+/* Wallet manager */
+.light-app-shell { background: #18191a; }
+.light-wallet-app { min-height: 100dvh; height: 100dvh; padding: 0; overflow: hidden; color: #f1f1f2; background: #18191a; }
+.wallets-screen { position: relative; width: 100%; height: 100dvh; min-height: 0; overflow-y: auto; padding: 20px 24px 164px; background: #18191a; animation: wallets-slide-in .32s cubic-bezier(.22,.8,.24,1) both; scrollbar-width: none; }
+.wallets-screen::-webkit-scrollbar { display: none; }
+.wallets-screen::before, .wallets-screen::after { display: none; }
+.wallets-screen-header, .wallets-screen > h2, .main-wallet-card, .wallets-bottom-actions { position: relative; z-index: 1; }
+.wallets-screen-header { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; }
+.wallets-screen-header button { display: grid; width: 48px; height: 48px; place-items: center; border: 1px solid #3b3c3e; border-radius: 50%; color: #ededee; background: #292a2c; cursor: pointer; }
+.wallets-screen-header h1 { margin: 0; text-align: center; font-size: var(--font-size-header); }
+.wallets-screen > h2 { margin: 23px 0 11px; color: #a4a5aa; font-size: 17px; font-weight: 600; }
+.wallet-card-list { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+.main-wallet-card { position: relative; display: block; width: 100%; min-height: 78px; padding: 15px 17px; border: 1px solid #303133; border-radius: 14px; color: inherit; background: #202122; font: inherit; text-align: left; cursor: pointer; }
+.main-wallet-card:active { opacity: .68; }
+.main-wallet-title { display: flex; align-items: center; gap: 14px; }
+.wallet-shield { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid #44464a; border-radius: 50%; color: #58a1ff; background: #1e1f20; font-size: 18px; }
+.main-wallet-title div { display: flex; flex: 1; flex-direction: column; gap: 5px; }
+.main-wallet-title strong { font-size: 17px; }
+.main-wallet-title div span { color: #98999e; font-size: 13px; }
+.main-wallet-title > b { align-self: flex-start; color: #9b9ca1; font-size: 27px; line-height: .7; }
+.wallet-selected { position: absolute; top: 10px; left: 66px; display: grid; width: 18px; height: 18px; place-items: center; border-radius: 50%; color: #08150d; background: #31e88e; font-size: 13px; font-weight: 800; }
+.wallets-bottom-actions { position: fixed; right: 24px; bottom: 26px; left: 24px; display: flex; flex-direction: column; gap: 12px; }
+.wallets-bottom-actions button { display: flex; height: 52px; align-items: center; justify-content: center; gap: 10px; border: 1px solid #3a3b3d; border-radius: 26px; color: #e7e7e9; background: #2a2b2d; font-size: 15px; font-weight: 600; cursor: pointer; }
+.add-wallet-overlay { position: fixed; z-index: 40; inset: 0; display: flex; align-items: flex-end; background: rgba(0,0,0,.55); animation: add-wallet-fade .2s ease both; }
+.add-wallet-sheet { position: relative; width: min(100%, 591px); min-height: 53vh; padding: 40px 24px 26px; border-radius: 28px 28px 0 0; background: #1d1e1f; box-shadow: 0 -14px 40px rgba(0,0,0,.32); animation: add-wallet-sheet-rise .3s cubic-bezier(.22,.8,.24,1) both; }
+.add-wallet-close { position: absolute; z-index: 2; top: 20px; right: 21px; display: grid; width: 42px; height: 42px; place-items: center; border: 0; color: #f2f2f3; background: transparent; cursor: pointer; pointer-events: auto; }
+.wallet-illustration { position: relative; height: 225px; margin: 0 auto; overflow: hidden; }
+.wallet-illustration img { display: block; width: min(100%, 146px); height: 100%; margin: 0 auto; object-fit: contain; }
+.illustration-card { position: absolute; right: 50%; bottom: 26px; width: 126px; height: 88px; border: 2px solid #20272f; border-radius: 10px; background: linear-gradient(135deg, #37fb9a 5%, #0ddfce 52%, #304eff 100%); box-shadow: 0 12px 0 #22293c; transform: translateX(50%) rotate(-28deg); }
+.illustration-card::before { position: absolute; top: 17px; left: 31px; width: 44px; height: 27px; border: 3px solid #12203a; border-radius: 6px; content: ''; transform: rotate(8deg); }
+.illustration-card::after { position: absolute; right: 16px; bottom: 13px; width: 14px; height: 14px; border-radius: 50%; background: #12203a; content: ''; }
+.illustration-ring { position: absolute; border: 2px solid #28a8ff; border-radius: 50%; opacity: .9; }
+.ring-one { top: 57px; left: calc(50% - 92px); width: 65px; height: 30px; transform: rotate(28deg); }
+.ring-two { right: calc(50% - 100px); bottom: 74px; width: 75px; height: 29px; border-color: #744dff; transform: rotate(-22deg); }
+.illustration-orb { position: absolute; top: 66px; left: calc(50% + 22px); width: 50px; height: 39px; border: 2px solid #ffd635; border-radius: 50%; background: #42aaff; transform: rotate(-20deg); }
+.add-wallet-option { display: flex; width: 100%; min-height: 72px; align-items: center; gap: 14px; margin-top: 12px; padding: 11px 20px; border: 1px solid #292a2c; border-radius: 20px; color: #f2f2f3; background: #272829; text-align: left; cursor: pointer; }
+.add-wallet-option > span:nth-child(2) { display: flex; flex: 1; flex-direction: column; gap: 3px; }
+.add-wallet-option strong { font-size: 17px; }
+.add-wallet-option small { color: #9c9da1; font-size: 14px; }
+.add-wallet-option > b { color: #d7d8da; font-size: 31px; font-weight: 300; }
+.add-wallet-option:disabled { cursor: default; opacity: .68; }
+.add-wallet-option.creating .create-icon { animation: create-wallet-pulse .7s ease-in-out infinite alternate; }
+.add-option-icon { display: grid; width: 38px; height: 38px; place-items: center; flex: 0 0 38px; border-radius: 50%; }
+.add-option-icon svg { width: 19px; height: 19px; stroke-width: 1.55; }
+.create-icon { color: #fff; background: #1515f4; }
+.import-icon { color: #2157d6; background: #f0f1ff; }
+@keyframes add-wallet-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes add-wallet-sheet-rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes create-wallet-pulse { from { transform: scale(.9); } to { transform: scale(1.08); } }
+
+/* Discover */
+.discover-screen { min-height: calc(100vh - 30px); padding: 15px 0 105px; }
+.discover-heading h1 { margin: 5px 0 26px; color: #f3f3f4; font-size: var(--font-size-header); text-align: center; }
+.dapp-search { display: flex; height: 53px; align-items: center; gap: 12px; padding: 0 17px; border-radius: 28px; color: #8b8c91; background: #292a2c; font-size: 17px; font-weight: 500; }
+.dapp-banner { position: relative; display: flex; height: 143px; align-items: center; justify-content: space-between; margin-top: 23px; padding: 0 23px; overflow: hidden; border: 1px solid #e7eaf6; border-radius: 22px; background: linear-gradient(105deg, #dfe6ff 0%, #edf1ff 60%, #fff 100%); }
+.dapp-explore-image { position: absolute; top: -5px; right: -9px; width: min(52%, 258px); height: 153px; object-fit: cover; object-position: 53% 52%; }
+.dapp-banner > div, .banner-arrow { position: relative; z-index: 1; }
+.dapp-banner strong { color: var(--ref-blue); font-size: 25px; font-weight: 750; line-height: 1.04; letter-spacing: -.035em; }
+.banner-coins { position: relative; width: 150px; height: 120px; transform: rotate(-15deg); }
+.banner-coins i, .banner-coins b { position: absolute; display: grid; place-items: center; border: 3px solid #f3c72b; border-radius: 50%; font-style: normal; font-weight: 800; }
+.banner-coins i { right: 6px; top: 1px; width: 81px; height: 44px; color: #fff; background: #44aef1; transform: rotate(18deg); }
+.banner-coins b { bottom: 2px; left: 15px; width: 104px; height: 70px; color: #fff; background: #e93348; font-size: 39px; }
+.banner-arrow { position: absolute; top: 52px; right: 13px; display: grid; width: 34px; height: 34px; place-items: center; color: #3d4149; }
+.banner-arrow .app-icon { transform: rotate(-90deg); stroke-width: 2.6; }
+.explore-title { display: flex; align-items: center; gap: 7px; margin: 19px 0 22px; color: #eeeef0; font-size: 21px; }
+.explore-title svg { transform: rotate(-90deg); }
+.dapp-categories { display: flex; gap: 10px; margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
+.dapp-categories::-webkit-scrollbar { display: none; }
+.dapp-categories button { height: 49px; flex: 0 0 auto; padding: 0 18px; border-radius: 25px; color: #b8b9bd; background: #2b2c2e; font-size: 17px; cursor: pointer; }
+.dapp-categories button.active { color: #f1f1f2; background: #686a6c; }
+.dapp-list { display: flex; flex-direction: column; gap: 28px; }
+.dapp-row { display: flex; min-height: 80px; align-items: center; gap: 18px; min-width: 0; }
+.dapp-icon { display: grid; width: 80px; height: 80px; flex: 0 0 80px; place-items: center; border-radius: 20px; color: #fff; font-size: 32px; font-weight: 700; }
+.lido-dapp { background: linear-gradient(145deg, #ffb48c, #f3f2f5 48%, #65cfff); }
+.aave-dapp { background: #3c3c3e; }
+.uniswap-dapp { background: #ff1680; }
+.pancake-dapp { background: #31d3df; }
+.pendle-dapp { color: #24345f; background: #f5f5f5; }
+.dapp-row > div { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.dapp-row strong { color: #f0f0f1; font-size: 20px; }
+.dapp-row div span { overflow: hidden; color: #a4a5aa; font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.view-dapps-button { display: flex; height: 54px; align-items: center; justify-content: center; gap: 17px; margin: 24px auto 0; padding: 0 21px; border-radius: 28px; color: #eeeef0; background: #2b2c2e; font-size: 17px; cursor: pointer; }
+.view-dapps-button .app-icon { transform: rotate(-90deg); stroke-width: 2.4; }
+
+@media (max-width: 430px) {
+  .passcode-container { height: 90vh; padding: 32px 24px; }
+  .passcode-inputs { gap: 0; }
+  .main-content h2 { font-size: 20px; }
+  .input-box { width: clamp(44px, 12.2vw, 48px); height: 52px; }
+  .touch-id-button { margin-top: 48px; font-size: 18px; }
+  .keypad-container { gap: 16px; }
+  .auth-sheet { min-height: 0; height: 54dvh; padding: 25px 22px 18px; }
+  .auth-brand-mark { top: -29px; width: 58px; height: 58px; }
+  .auth-brand-mark .wallet-glyph { width: 40px; height: 40px; flex-basis: 40px; }
+  .auth-sheet h1 { font-size: 21px; }
+  .auth-sheet p { margin: 7px 0 0; font-size: 16px; }
+  .auth-touch-button { top: 68%; gap: 9px; font-size: 13px; }
+  .auth-touch-button svg { width: 62px; height: 62px; }
+  .auth-cancel { bottom: 18px; left: 22px; }
+  .wallets-screen { padding-right: 18px; padding-left: 18px; }
+  .wallets-screen-header { grid-template-columns: 46px 1fr 46px; }
+  .wallets-screen-header button { width: 46px; height: 46px; }
+  .wallets-bottom-actions { right: 18px; bottom: 18px; left: 18px; }
+  .dapp-banner strong { font-size: 20px; }
+  .dapp-explore-image { width: 54%; }
+  .dapp-icon { width: 64px; height: 64px; flex-basis: 64px; font-size: 28px; }
+  .dapp-row { gap: 13px; }
+}
+
+@keyframes wallets-slide-in {
+  from { opacity: .65; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes auth-sheet-rise {
+  from { opacity: .5; transform: translateY(35%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Light mode palette */
+:root {
+  color: #202124;
+  background: #fff;
+  --light-ink: #202124;
+  --light-muted: #707176;
+  --light-surface: #f2f2f4;
+  --light-line: #e2e2e5;
+  --light-blue: #1515f4;
+  --light-positive: #159947;
+  --light-negative: #d92a3b;
+}
+
+body, .app-shell { color: var(--light-ink); background: #fff; }
+.wallet-app { color: var(--light-ink); background: #fff; }
+
+.wallet-chip {
+  color: var(--light-ink);
+  border-color: var(--light-line);
+  background: var(--light-surface);
+}
+.wallet-glyph { color: #fff; background: var(--light-blue); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2), 0 4px 12px rgba(21,21,244,.16); }
+.wallet-chip-copy strong { color: var(--light-ink); }
+.wallet-chip-copy span { color: var(--light-muted); }
+.round-button { border-color: var(--light-line); color: var(--light-ink); background: var(--light-surface); }
+.round-button svg { color: var(--light-ink); }
+
+.limit-banner {
+  color: var(--light-ink);
+  border-color: var(--light-line);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(20,20,30,.03);
+}
+.limit-banner strong { color: var(--light-ink); }
+.limit-banner div span { color: var(--light-muted); }
+.banner-indicator { background: #a3a4a8; }
+.banner-indicator.active { background: #26272a; }
+
+.start-section h1,
+.token-section h2,
+.perps-section h2,
+.home-section-heading { color: var(--light-ink); }
+.start-action { color: var(--light-ink); }
+.action-glyph { color: var(--light-ink); background: var(--light-surface); }
+.qr-glyph { color: var(--light-ink); }
+.mcap-glyph { color: var(--light-blue); }
+.binance-glyph { color: #f3bd24; }
+.card-glyph { color: var(--light-ink); }
+.token-leading strong, .token-price strong { color: var(--light-ink); }
+.token-copy span, .token-price span { color: var(--light-muted); }
+.view-all-button { color: var(--light-ink); background: var(--light-surface); }
+.perps-preview { border-color: var(--light-line); background: #fff; }
+.perps-preview div span { color: var(--light-muted); }
+
+.nav-pill {
+  border-color: var(--light-line);
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 5px 18px rgba(20,20,30,.08), inset 0 1px 0 rgba(255,255,255,.95);
+}
+.nav-item { color: #77787c; }
+.nav-item.active { color: #505156; background: #ededf0; box-shadow: none; }
+.nav-search { border-color: var(--light-line); color: #66676b; background: rgba(255,255,255,.98); box-shadow: 0 5px 18px rgba(20,20,30,.08); }
+
+/* Markets */
+.markets-screen { color: var(--light-ink); background: #fff; }
+.markets-heading h1, .market-section-title { color: var(--light-ink); }
+.market-section-title span { color: var(--light-muted); }
+.search-circle, .back-circle { color: #1b1c1f; background: var(--light-surface); }
+.market-search { border-color: var(--light-line); color: var(--light-ink); background: var(--light-surface); }
+.market-search::placeholder { color: #85868b; }
+.market-promos button { color: var(--light-ink); background: var(--light-surface); }
+.promo-icon { color: #292a2d; }
+.top-card { color: var(--light-ink); background: var(--light-surface); }
+.top-card-name { color: #727378; }
+.market-change { color: var(--light-negative); }
+.positive-text { color: var(--light-positive) !important; }
+.negative-text { color: var(--light-negative) !important; }
+.sparkline polygon { fill: var(--chart-negative-fill); }
+.sparkline { shape-rendering: geometricPrecision; }
+.sparkline polyline { fill: none; stroke: var(--chart-negative); stroke-width: 2.65; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.sparkline.positive polygon { fill: var(--chart-positive-fill); }
+.sparkline.positive polyline { stroke: var(--chart-positive); }
+.sparkline-empty { background: linear-gradient(135deg, transparent 48%, rgba(32,33,36,.08) 49%, transparent 51%); }
+.market-filters button, .market-sort button { color: #292a2d; background: var(--light-surface); }
+.market-filters button.selected { color: #303136; background: #d1d1d6; }
+.market-filters .filter-star { color: #68696e; }
+.market-sort button:nth-child(2) span { color: #78797e; }
+.market-row { color: var(--light-ink); }
+.market-row-main span { color: var(--light-muted); }
+.market-row-price { background: linear-gradient(90deg, transparent, #fff 23%); }
+.market-row-price span { color: var(--light-negative); }
+.market-error { color: #be2739; background: rgba(217,42,59,.08); }
+.skeleton-row, .market-skeleton-line, .market-skeleton-avatar, .market-skeleton-chart, .top-skeleton-chart { background: linear-gradient(90deg, #f0f0f2 25%, #e6e6e9 37%, #f0f0f2 63%); }
+.swap-cta, .trade-cta { color: #fff; background: var(--light-blue); box-shadow: 0 6px 14px rgba(21,21,244,.14); }
+
+/* Asset detail */
+.detail-screen { color: var(--light-ink); background: #fff; }
+.favorite-button { color: var(--light-blue); }
+.detail-identity > div:nth-child(2) span, .detail-chart-loading, .chart-note, .balance-block small { color: var(--light-muted); }
+.detail-price span { color: var(--light-positive); }
+.detail-chart { shape-rendering: geometricPrecision; }
+.detail-chart.positive polyline { fill: none; stroke: var(--chart-positive); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.detail-chart:not(.positive) polyline { fill: none; stroke: var(--chart-negative); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.range-tabs { color: #77787d; }
+.range-tabs button.active { color: var(--light-ink); background: var(--light-surface); }
+.range-tabs svg { color: #62636a; }
+.detail-actions button, .ai-summary > button { color: var(--light-ink); background: var(--light-surface); }
+.ai-summary p { color: #45464b; }
+.ai-summary > button { color: #5a5b60; }
+.trade-ticker { color: var(--light-muted); }
+.trade-ticker b { color: var(--light-negative); }
+
+/* Wallet manager */
+.light-app-shell, .light-wallet-app, .wallets-screen { color: var(--light-ink); background: #fff; }
+.wallets-screen-header button { border-color: var(--light-line); color: var(--light-ink); background: var(--light-surface); }
+.wallets-screen > h2 { color: var(--light-muted); }
+.main-wallet-card { border-color: var(--light-line); background: var(--light-surface); }
+.wallet-shield { border-color: #d8d8dc; color: var(--light-blue); background: #fff; }
+.main-wallet-title strong { color: var(--light-ink); }
+.main-wallet-title div span, .main-wallet-title > b { color: var(--light-muted); }
+.wallet-selected { color: #fff; background: var(--light-positive); }
+.wallets-bottom-actions button { border-color: var(--light-line); color: var(--light-ink); background: var(--light-surface); }
+.add-wallet-overlay { background: rgba(20,20,25,.28); }
+.add-wallet-sheet { background: #fff; box-shadow: 0 -14px 40px rgba(20,20,30,.16); }
+.add-wallet-close { color: var(--light-ink); }
+.add-wallet-option { border-color: var(--light-line); color: var(--light-ink); background: var(--light-surface); }
+.add-wallet-option small { color: var(--light-muted); }
+.add-wallet-option > b { color: #5d5e63; }
+
+/* Discover */
+.discover-screen { color: var(--light-ink); background: #fff; }
+.discover-heading h1, .explore-title, .dapp-row strong { color: var(--light-ink); }
+.dapp-search, .dapp-categories button, .view-dapps-button { color: #74757a; background: var(--light-surface); }
+.dapp-banner { border-color: #e7eaf6; background: linear-gradient(105deg, #dfe6ff 0%, #edf1ff 60%, #fff 100%); }
+.dapp-categories button.active { color: #303136; background: #d1d1d6; }
+.dapp-row div span { color: var(--light-muted); }
+.view-dapps-button { color: var(--light-ink); }
+
+/* Final alignment pass */
+.wallet-header { gap: 16px; }
+.wallet-chip, .header-actions { flex-shrink: 0; }
+.header-actions { align-items: center; }
+.wallet-header .round-button {
+  width: var(--top-control-size);
+  height: var(--top-control-size);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #25262a !important;
+  background: transparent !important;
+  box-shadow: none;
+}
+.wallet-header .round-button svg { color: #25262a !important; }
+
+.action-glyph, .top-card, .crypto-mark, .token-mark, .perps-coin,
+.search-circle, .back-circle, .favorite-button, .round-button,
+.nav-item, .nav-search, .wallets-screen-header button {
+  flex-shrink: 0;
+}
+.action-glyph, .top-card, .market-filters button, .market-sort button,
+.view-all-button, .perps-preview, .dapp-search, .dapp-categories button,
+.view-dapps-button, .main-wallet-card, .wallets-bottom-actions button {
+  box-shadow: none;
+}
+.start-actions, .market-promos, .top-traded-row, .market-filters, .market-sort { align-items: center; }
+.token-price { min-width: 126px; }
+.token-price strong, .market-row-price strong, .market-row-price span { text-align: right; }
+.market-row-main { min-width: 0; }
+.market-row-price { flex: 0 0 100px; }
+.swap-cta { border: 0; }
+
+@media (max-width: 430px) {
+  .wallet-header { gap: 8px; }
+  .header-actions { gap: 7px; }
+  .wallet-chip .wallet-glyph { width: 32px; height: 32px; flex-basis: 32px; border-radius: 50%; }
+  .token-price { min-width: 104px; }
+  .market-row { grid-template-columns: minmax(0, 1fr) 72px 92px; gap: 6px; }
+  .market-row-chart { width: 72px; height: 40px; }
+  .market-row-price { flex-basis: 92px; width: 92px; }
+}
+
+/* Icon sizing tokens: visual size is independent from each component's hit area. */
+.app-icon { display: block; flex: 0 0 auto; }
+.app-icon-xs { width: 16px !important; height: 16px !important; }
+.app-icon-sm { width: 20px !important; height: 20px !important; }
+.app-icon-md { width: 24px !important; height: 24px !important; }
+.app-icon-lg { width: 28px !important; height: 28px !important; }
+.app-icon-xl { width: 32px !important; height: 32px !important; }
+.app-icon-hero { width: 64px !important; height: 64px !important; }
+
+/* Keep icon-only controls easy to tap while preserving the compact visual language. */
+.search-circle, .back-circle, .favorite-button, .round-button,
+.nav-item, .nav-search, .wallets-screen-header button, .add-wallet-close {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+.market-filters button, .market-sort button, .range-tabs button { min-height: 44px; touch-action: manipulation; }
+
+/* Reference-tuned visual tokens. Content and component structure stay unchanged. */
+:root {
+  --ref-ink: #202124;
+  --ref-muted: #707176;
+  --ref-surface: #f2f2f4;
+  --ref-line: #e2e2e5;
+  --ref-blue: #1515f4;
+  --ref-positive: #159947;
+  --ref-negative: #d92a3b;
+  --gray-2: #1b1c20;
+  --wallet-surface: #f4f4f6;
+  --ref-page-gutter: clamp(18px, 4.2vw, 29px);
+  --ref-token-icon-size: 46px;
+  --ref-control-icon: clamp(20px, 4.35vw, 30px);
+  --ref-nav-icon-size: clamp(24px, 3.76vw, 26px);
+  --ref-chevron-icon: clamp(15px, 2.32vw, 16px);
+  --ref-search-icon: clamp(24px, 4.64vw, 32px);
+}
+
+/* Keep the light visual language consistent without touching any text/data. */
+.wallet-app,
+.light-wallet-app,
+.wallets-screen,
+.app-shell { color: var(--ref-ink); }
+.wallet-app { background: #fff; }
+.wallet-chip,
+.action-glyph,
+.view-all-button,
+.nav-pill,
+.nav-search { background-color: var(--ref-surface); }
+.wallet-chip { border-color: var(--ref-line); }
+.wallet-chip-copy strong,
+.start-action,
+.start-action > span:last-child,
+.token-leading strong,
+.token-price strong,
+.token-section h2,
+.perps-section h2,
+.home-section-heading { color: var(--ref-ink); }
+.token-copy span,
+.token-price span { color: var(--ref-muted); }
+
+/* Header controls use the same surface as the wallet selector. */
+.wallet-header .round-button {
+  color: var(--ref-ink) !important;
+  background: var(--ref-surface) !important;
+  border-color: var(--ref-line);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 3px 10px rgba(24,25,32,.06);
+}
+.wallet-header .round-button .app-icon,
+.wallet-header .round-button svg { color: var(--ref-ink) !important; }
+
+/* Icon sizing follows the screenshot hierarchy: control, section, search. */
+.wallet-chip .wallet-glyph .app-icon,
+.wallet-header .round-button .app-icon,
+.detail-actions button .app-icon,
+.touch-id-button .app-icon { width: var(--ref-control-icon) !important; height: var(--ref-control-icon) !important; }
+.search-circle .app-icon,
+.nav-search .app-icon { width: var(--ref-search-icon) !important; height: var(--ref-search-icon) !important; }
+.nav-item .app-icon { width: var(--ref-nav-icon-size) !important; height: var(--ref-nav-icon-size) !important; stroke-width: 2.1; }
+.nav-search .app-icon { stroke-width: 2.05; }
+.token-section h2 .app-icon,
+.perps-section h2 .app-icon,
+.home-section-heading .app-icon,
+.view-all-button .app-icon,
+.explore-title .app-icon { width: var(--ref-chevron-icon) !important; height: var(--ref-chevron-icon) !important; }
+.wallet-glyph,
+.action-glyph,
+.token-mark,
+.nav-item,
+.nav-search,
+.round-button,
+.search-circle,
+.back-circle,
+.favorite-button { flex-shrink: 0; }
+
+@media (min-width: 431px) {
+  :root { --ref-token-icon-size: clamp(44px, 7.38vw, 51px); }
+  .wallet-app { padding-left: var(--ref-page-gutter); padding-right: var(--ref-page-gutter); }
+  .header-actions { gap: clamp(12px, 2.9vw, 20px); }
+  .wallet-header .round-button { width: clamp(66px, 11.87vw, 82px); height: clamp(66px, 11.87vw, 82px); }
+  .start-actions { gap: clamp(22px, 4.2vw, 29px); }
+  .token-leading { gap: clamp(17px, 2.9vw, 20px); }
+  .token-row { min-height: clamp(98px, 17.1vw, 118px); }
+  .token-mark { width: var(--ref-token-icon-size); height: var(--ref-token-icon-size); flex-basis: var(--ref-token-icon-size); }
+  .bottom-dock { width: min(calc(100% - 48px), 614px); bottom: clamp(12px, 1.5vw, 23px); }
+  .nav-pill { height: clamp(84px, 14.9vw, 103px); border-radius: clamp(44px, 7.24vw, 50px); }
+  .nav-item { width: clamp(66px, 11.87vw, 82px); height: clamp(66px, 11.87vw, 82px); }
+  .nav-search { width: clamp(86px, 15.05vw, 104px); height: clamp(86px, 15.05vw, 104px); flex-basis: clamp(86px, 15.05vw, 104px); }
+}
+
+/* Home wallet balance and primary actions. */
+.home-balance-section { padding-top: 38px; }
+.home-balance-section h1 { margin: 0; color: var(--ref-ink); font-size: clamp(42px, 8vw, 58px); font-weight: 650; letter-spacing: -.06em; line-height: 1.05; }
+.home-balance-section p { margin: 19px 0 0; color: var(--ref-muted); font-size: 20px; font-weight: 500; letter-spacing: -.025em; }
+.home-balance-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 50px; }
+.home-balance-action { display: flex; min-width: 0; align-items: center; flex-direction: column; gap: 13px; padding: 0; color: var(--ref-ink); background: transparent; cursor: pointer; touch-action: manipulation; }
+.home-balance-action-icon-wrap { display: grid; width: 100%; height: 96px; place-items: center; border-radius: 22px; color: var(--ref-ink); background: var(--ref-surface); }
+.home-balance-action-icon { width: 35px; height: 35px; }
+.home-balance-action .app-icon { width: 35px !important; height: 35px !important; stroke-width: 2.2; }
+.home-balance-action strong { min-height: 24px; color: var(--ref-ink); font-size: 19px; font-weight: 600; line-height: 1.25; }
+.home-balance-action.swap .home-balance-action-icon-wrap { color: #10251b; background: #43f394; }
+.home-balance-action.swap .home-balance-action-icon { transform: scaleX(-1); }
+.home-balance-action:active .home-balance-action-icon-wrap { transform: scale(.96); }
+
+/* Native camera preview used by the home QR scan control. */
+.scanner-overlay { position: fixed; z-index: 100; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(10,11,13,.82); }
+.scanner-panel { width: min(100%, 520px); overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: 28px; color: #fff; background: #17181a; box-shadow: 0 20px 70px rgba(0,0,0,.35); }
+.scanner-header { display: flex; min-height: 66px; align-items: center; justify-content: space-between; padding: 0 20px 0 24px; }
+.scanner-header h2 { margin: 0; font-size: 21px; font-weight: 650; }
+.scanner-header button { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 50%; color: #fff; background: rgba(255,255,255,.1); cursor: pointer; }
+.scanner-camera-frame { position: relative; display: grid; min-height: min(74vw, 390px); place-items: center; margin: 0 18px; overflow: hidden; border-radius: 20px; background: #08090a; }
+.scanner-camera-frame video { display: block; width: 100%; height: 100%; min-height: min(74vw, 390px); object-fit: cover; }
+.scanner-camera-frame p { position: absolute; bottom: 18px; margin: 0; padding: 8px 13px; border-radius: 16px; color: #fff; background: rgba(0,0,0,.56); font-size: 13px; }
+.scanner-corner { position: absolute; width: 34px; height: 34px; border-color: #43f394; border-style: solid; }
+.scanner-corner.top-left { top: 22%; left: 18%; border-width: 3px 0 0 3px; border-radius: 8px 0 0; }
+.scanner-corner.top-right { top: 22%; right: 18%; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
+.scanner-corner.bottom-left { bottom: 22%; left: 18%; border-width: 0 0 3px 3px; border-radius: 0 0 0 8px; }
+.scanner-corner.bottom-right { right: 18%; bottom: 22%; border-width: 0 3px 3px 0; border-radius: 0 0 8px; }
+.scanner-error, .scanner-result { display: flex; padding: 18px 24px 24px; flex-direction: column; gap: 12px; }
+.scanner-error p, .scanner-result span { margin: 0; color: #c8c9cc; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.scanner-result strong { font-size: 15px; }
+.scanner-error button, .scanner-result button { min-height: 46px; border-radius: 24px; color: #101112; background: #43f394; font-size: 15px; font-weight: 700; cursor: pointer; }
+.scanner-fallback-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 430px) {
+  .scanner-overlay { align-items: flex-end; padding: 0; }
+  .scanner-panel { width: 100%; border-radius: 25px 25px 0 0; }
+  .scanner-camera-frame { min-height: 76dvh; margin: 0 14px; }
+  .scanner-camera-frame video { min-height: 76dvh; }
+}
+
+/* Home continuation cards from the reference screen. */
+.perps-card-row,
+.earn-card-row { display: flex; gap: 18px; margin-top: 22px; overflow: hidden; }
+.perps-card,
+.earn-card { flex: 0 0 calc((100% - 18px) / 2.1); min-width: 0; min-height: 0; aspect-ratio: 1.12 / 1; padding: 27px 28px 23px; border-radius: 24px; background: var(--ref-surface); }
+.perps-card-icon { position: relative; width: var(--ref-token-icon-size); height: var(--ref-token-icon-size); }
+.token-mark,
+.perps-card .token-mark,
+.watchlist-row .token-mark { width: var(--ref-token-icon-size); height: var(--ref-token-icon-size); flex-basis: var(--ref-token-icon-size); }
+.perps-venue-badge { position: absolute; right: 0; bottom: 2px; display: grid; width: 20px; height: 20px; place-items: center; border: 2px solid #fff; border-radius: 6px; color: #fff; background: #15986a; }
+.perps-venue-badge svg { width: 14px; height: 14px; }
+.perps-card-title { display: flex; align-items: center; gap: 9px; margin-top: 12px; }
+.perps-card-title strong,
+.earn-card strong { color: var(--ref-ink); font-size: 22px; font-weight: 600; line-height: 1; }
+.perps-card-title span { padding: 5px 9px; border-radius: 13px; color: var(--ref-muted); background: #e5e5e8; font-size: 16px; font-weight: 500; line-height: 1; }
+.perps-volume,
+.earn-card > span:last-child { display: block; margin-top: 11px; color: var(--ref-muted); font-size: 16px; font-weight: 500; }
+
+.earn-section { margin-top: 29px; }
+.earn-section h2,
+.watchlist-section h2 { display: flex; align-items: center; gap: 7px; margin: 0; color: var(--ref-ink); font-size: 23px; font-weight: 600; letter-spacing: -.035em; }
+.earn-section h2 svg,
+.watchlist-section h2 svg { transform: rotate(-90deg); stroke-width: 2.25; }
+.earn-card { display: grid; padding-top: 27px; grid-template-rows: auto auto auto; align-content: space-between; }
+.earn-mark { display: block; width: 62px; height: 62px; }
+.earn-mark svg { display: block; width: 100%; height: 100%; }
+.earn-card strong { display: block; margin-top: 0; font-size: 21px; white-space: nowrap; }
+.earn-card > span:last-child { margin-top: 0; }
+
+.ai-banner { display: flex; width: 100%; min-height: 58px; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; padding: 7px 14px; border-radius: 22px; color: var(--ref-ink); background: var(--ref-surface); cursor: pointer; }
+.ai-banner-label { display: inline-flex; min-width: 0; align-items: center; gap: 8px; }
+.ai-sparkle { display: grid; width: 23px; height: 23px; place-items: center; flex: 0 0 23px; color: var(--ref-ink); }
+.ai-sparkle svg { width: 100%; height: 100%; }
+.ai-banner-label strong { font-size: 17px; font-weight: 600; white-space: nowrap; }
+.ai-banner-action { display: inline-flex; min-height: 42px; align-items: center; gap: 8px; padding: 0 14px; border-radius: 24px; color: var(--ref-ink); background: #e5e5e8; font-size: 16px; font-weight: 500; white-space: nowrap; }
+.ai-banner-action svg { transform: rotate(-90deg); }
+
+.watchlist-section { margin-top: 22px; padding-bottom: 90px; }
+.watchlist-list { margin-top: 27px; }
+.watchlist-row { display: flex; min-height: 98px; align-items: center; gap: 17px; }
+  .watchlist-row .token-mark { width: var(--ref-token-icon-size); height: var(--ref-token-icon-size); flex-basis: var(--ref-token-icon-size); }
+.watchlist-name { min-width: 0; flex: 1; }
+.watchlist-name strong { overflow: hidden; color: var(--ref-ink); font-size: 20px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.watchlist-price { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.watchlist-price strong { color: var(--ref-ink); font-size: 20px; font-weight: 600; white-space: nowrap; }
+.watchlist-price span { font-size: 16px; font-weight: 500; white-space: nowrap; }
+.watchlist-empty-state { margin: 0; padding: 18px 0 4px; color: var(--ref-muted); font-size: 14px; font-weight: 500; }
+
+@media (max-width: 430px) {
+  :root { --ref-token-icon-size: 37px; }
+  .home-balance-section { padding-top: 29px; }
+  .home-balance-section h1 { font-size: 46px; }
+  .home-balance-section p { margin-top: 14px; font-size: 17px; }
+  .home-balance-actions { gap: 9px; margin-top: 40px; }
+  .home-balance-action { gap: 10px; }
+  .home-balance-action-icon-wrap { height: 66px; border-radius: 18px; }
+  .home-balance-action-icon { width: 29px; height: 29px; }
+  .home-balance-action .app-icon { width: 29px !important; height: 29px !important; }
+  .home-balance-action strong { min-height: 22px; font-size: 16px; }
+  .perps-card,
+  .earn-card { padding-right: 21px; padding-left: 21px; }
+  .earn-card { min-height: 136px; aspect-ratio: 1.08 / 1; padding: 14px 14px 13px; }
+  .earn-mark { width: 42px; height: 42px; }
+  .earn-card strong { margin-top: 0; font-size: 15px; }
+  .earn-card > span:last-child { margin-top: 0; font-size: 12px; }
+  .perps-card-title strong { font-size: 18px; }
+  .perps-card-title span { font-size: 14px; }
+  .perps-volume { font-size: 14px; }
+  .watchlist-list { margin-top: 17px; }
+  .watchlist-row { min-height: 76px; gap: 12px; }
+  .watchlist-name strong { font-size: 17px; }
+  .watchlist-price { gap: 2px; }
+  .watchlist-price strong { font-size: 18px; }
+  .watchlist-price span { font-size: 13px; }
+  .ai-banner { padding-right: 14px; padding-left: 14px; }
+  .ai-banner-label strong { font-size: 16px; }
+  .ai-banner-action { gap: 6px; padding: 0 12px; font-size: 15px; }
+  .watchlist-price strong { font-size: 18px; }
+  .watchlist-price span { font-size: 14px; }
+}
+
+/* Wallet manager: split-color shield and selected-wallet badge alignment. */
+.wallet-shield { width: 32px; height: 32px; flex: 0 0 32px; border-color: #e2e2e5; color: #fff; background: #fff; }
+.trust-wallet-icon { display: grid; width: 100%; height: 100%; place-items: center; color: #fff; }
+.trust-wallet-icon svg { width: 25px; height: 25px; }
+.wallet-selected { top: 5px; left: 31px; z-index: 2; width: 18px; height: 18px; }
+.wallets-screen-header h1 { font-size: var(--font-size-header); font-weight: 600; }
+.wallet-settings-button { border: 0 !important; color: var(--ref-ink) !important; background: transparent !important; box-shadow: none !important; }
+.wallet-settings-button svg { color: var(--ref-ink) !important; }
+
+/* Wallet manager reference layout. */
+.wallets-screen { padding: 20px 20px 96px; }
+.wallets-screen-header { grid-template-columns: 44px 1fr 44px; height: auto; }
+.wallets-screen-header h1 { font-size: var(--font-size-header); font-weight: 600; }
+.wallet-back-button { justify-items: start; border: 0 !important; color: #505156 !important; background: transparent !important; box-shadow: none !important; }
+.back-arrow-icon { width: 32px; height: 32px; }
+.wallets-screen > h2 { margin: 32px 0 0; padding: 0; color: #66676c; font-size: 15px; font-weight: 600; }
+.wallet-card-list { gap: 12px; margin-top: 18px; }
+.main-wallet-card { display: flex; min-height: 64px; height: 64px; align-items: center; padding: 8px 17px; border: 0; border-radius: 10px; background: var(--wallet-surface); }
+.main-wallet-title { width: 100%; gap: 14px; }
+.wallet-shield { width: 32px; height: 32px; flex-basis: 32px; border-color: #303136; }
+.trust-wallet-icon svg { width: 25px; height: 25px; }
+.main-wallet-title strong { font-size: 17px; font-weight: 600; }
+.main-wallet-title > b { position: absolute; top: 50%; right: 17px; align-self: auto; color: #27282c; font-size: 27px; line-height: .7; transform: translateY(-50%); }
+.wallet-selected { top: 9px; left: 40px; width: 14px; height: 14px; color: #fff; background: #1515f4; font-size: 9px; line-height: 1; }
+.wallets-bottom-actions { right: 20px; bottom: 26px; left: 20px; z-index: 5; gap: 12px; padding: 0; border-top: 0; background: transparent; }
+.wallets-bottom-actions::before { content: ''; position: absolute; top: -25px; right: -24px; left: -24px; height: 1px; background: var(--ref-line); }
+.wallets-bottom-actions button { height: 52px; border: 0; border-radius: 26px; color: var(--gray-2); background: var(--wallet-surface); font-size: 15px; font-weight: 600; }
+.wallet-settings-icon { display: block; width: 28px; height: 28px; }
+.extension-qr-icon { display: block; width: 18px; height: 18px; flex: 0 0 18px; opacity: .72; }
+
+/* Configured wallets need room for all eleven selectable cards. */
+.wallets-screen { height: 100dvh; overflow-y: auto; padding-bottom: 164px; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.wallets-screen::-webkit-scrollbar { display: none; }
+.main-wallet-card { display: block; width: 100%; min-height: 64px; height: auto; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.main-wallet-card:active { opacity: .68; }
+.main-wallet-title div span { display: block; margin-top: 3px; }
+.watchlist-row { width: 100%; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.watchlist-row:active { opacity: .65; }
+.wallets-bottom-actions { position: fixed; z-index: 35; right: auto; bottom: max(18px, env(safe-area-inset-bottom)); left: 50%; width: min(calc(100% - 40px), 551px); transform: translateX(-50%); }
+
+@media (max-width: 430px) {
+  .wallets-bottom-actions { width: calc(100% - 36px); bottom: max(14px, env(safe-area-inset-bottom)); }
+}
+
+/* Wallets uses one intentional scroll region: the card list. The action bar is
+   part of the screen layout, so mobile browser viewport changes cannot place it
+   over a wallet card. */
+.wallets-screen { display: flex; height: 100dvh; flex-direction: column; overflow: hidden; padding: 20px 20px 0; }
+.wallet-card-list { min-height: 0; flex: 1 1 auto; overflow-y: auto; margin-top: 18px; padding: 0 0 14px; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.wallet-card-list::-webkit-scrollbar { display: none; }
+.wallets-bottom-actions { position: relative; z-index: 5; right: auto; bottom: auto; left: auto; width: 100%; flex: 0 0 auto; gap: 12px; margin: 0; padding: 12px 0 calc(18px + env(safe-area-inset-bottom)); background: #fff; transform: none; }
+.wallets-bottom-actions::before { top: 0; right: -20px; left: -20px; }
+
+@media (max-width: 430px) {
+  .wallets-screen { padding-right: 18px; padding-left: 18px; }
+  .wallets-bottom-actions { width: 100%; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .wallets-bottom-actions::before { right: -18px; left: -18px; }
+}
+
+/* Send / receive asset flows */
+.transfer-wallet-app { min-height: 100dvh; padding: 0; background: #fff; }
+.transfer-screen { width: 100%; min-height: 100dvh; padding: max(20px, env(safe-area-inset-top)) 24px calc(28px + env(safe-area-inset-bottom)); color: var(--ref-ink); background: #fff; }
+.transfer-heading { display: grid; min-height: 50px; grid-template-columns: 48px 1fr 48px; align-items: center; }
+.transfer-heading h1 { margin: 0; color: var(--ref-ink); font-size: var(--font-size-header); font-weight: 650; letter-spacing: -.045em; text-align: center; }
+.transfer-back-button, .transfer-info-button { display: grid; width: 48px; height: 48px; place-items: center; padding: 0; border-radius: 50%; color: #56575c; background: transparent; cursor: pointer; touch-action: manipulation; transition: background-color .18s ease, opacity .18s ease; }
+.transfer-back-button .back-arrow-icon { width: 32px; height: 32px; }
+.transfer-info-button { justify-self: end; color: #57585d; }
+.transfer-back-button:active, .transfer-info-button:active, .receive-actions button:active { opacity: .63; }
+.receive-warning { display: flex; align-items: flex-start; gap: 12px; margin-top: 25px; padding: 15px 17px; border-radius: 17px; color: #3a3527; background: #fbf1d9; }
+.receive-warning .app-icon { flex: 0 0 20px; margin-top: 2px; color: #b88910; }
+.receive-warning p { margin: 0; font-size: 16px; font-weight: 500; line-height: 1.45; }
+.receive-warning strong { font-weight: 700; }
+.transfer-info-note { margin: 9px 2px 0; color: #8e6a10; font-size: 13px; line-height: 1.4; }
+.transfer-asset { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; }
+.transfer-asset .crypto-mark { width: 32px; height: 32px; flex-basis: 32px; font-size: 16px; }
+.transfer-asset strong { font-size: 25px; font-weight: 700; letter-spacing: -.03em; }
+.transfer-asset > span { padding: 4px 10px; border-radius: 13px; color: #5e5f64; background: #d7d7da; font-size: 13px; font-weight: 700; line-height: 1; }
+.receive-qr { display: grid; width: min(100%, 276px); aspect-ratio: 1; place-items: center; margin: 55px auto 0; }
+.receive-qr-image, .receive-qr-fallback { display: block; width: 100%; height: 100%; }
+.receive-qr-fallback { fill: #08080a; shape-rendering: crispEdges; }
+.receive-address { max-width: 360px; margin: 15px auto 0; color: #4b4c51; font-size: 18px; font-weight: 600; letter-spacing: .015em; line-height: 1.55; overflow-wrap: anywhere; text-align: center; }
+.receive-memo { margin: 1px 0 0; color: #717278; font-size: 15px; font-weight: 500; text-align: center; }
+.receive-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 348px; margin: 49px auto 0; }
+.receive-actions button { display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 10px; padding: 0; color: var(--ref-ink); background: transparent; cursor: pointer; touch-action: manipulation; transition: opacity .18s ease; }
+.receive-actions button > span { display: grid; width: 80px; height: 80px; place-items: center; border-radius: 24px; color: #242529; background: var(--ref-surface); font-size: 33px; font-weight: 700; line-height: 1; transition: background-color .18s ease, color .18s ease; }
+.receive-actions button > span.selected { color: #fff; background: var(--ref-blue); }
+.receive-actions button strong { overflow: hidden; max-width: 100%; font-size: 15px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.receive-amount-field { display: block; max-width: 348px; margin: 25px auto 0; }
+.receive-amount-field > span, .send-field > span, .send-network > span { display: block; margin-bottom: 8px; color: #6f7075; font-size: 14px; font-weight: 600; }
+.receive-amount-field div { display: flex; height: 56px; align-items: center; gap: 10px; padding: 0 17px; border: 1px solid var(--ref-line); border-radius: 16px; background: #fff; }
+.receive-amount-field input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ref-ink); background: transparent; font: inherit; font-size: 19px; font-weight: 600; }
+.receive-amount-field b { color: #55565b; font-size: 15px; }
+.transfer-feedback { display: block; min-height: 20px; margin-top: 14px; color: var(--ref-positive); font-size: 14px; font-weight: 600; text-align: center; }
+
+.send-screen .transfer-asset { margin-top: 43px; }
+.send-form { max-width: 470px; margin: 46px auto 0; }
+.send-field { display: block; margin-top: 23px; }
+.send-field:first-child { margin-top: 0; }
+.send-address-input, .send-amount-input { display: flex; width: 100%; min-height: 60px; align-items: center; gap: 10px; padding: 0 10px 0 17px; border: 1px solid var(--ref-line); border-radius: 17px; background: var(--ref-surface); }
+.send-address-input:focus-within, .send-amount-input:focus-within, .receive-amount-field div:focus-within { border-color: rgba(21,21,244,.55); box-shadow: 0 0 0 3px rgba(21,21,244,.09); }
+.send-address-input input, .send-amount-input input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ref-ink); background: transparent; font: inherit; font-size: 16px; font-weight: 500; }
+.send-address-input input::placeholder, .send-amount-input input::placeholder, .receive-amount-field input::placeholder { color: #98999e; }
+.send-address-input button, .send-amount-input button { min-width: 52px; height: 38px; padding: 0 10px; border-radius: 12px; color: var(--ref-blue); background: #e5e5ff; font-size: 14px; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+.send-amount-input strong { color: #38393d; font-size: 16px; font-weight: 650; }
+.send-field small { display: block; margin: 8px 2px 0; color: var(--ref-muted); font-size: 13px; }
+.send-field em { display: block; margin: 6px 2px 0; color: var(--ref-negative); font-size: 13px; font-style: normal; }
+.send-network { display: flex; align-items: center; justify-content: space-between; margin-top: 30px; padding: 18px 17px; border-radius: 17px; background: var(--ref-surface); }
+.send-network > span { margin: 0; }
+.send-network strong { font-size: 16px; font-weight: 650; }
+.send-continue { width: 100%; min-height: 58px; margin-top: 42px; border-radius: 29px; color: #fff; background: var(--ref-blue); box-shadow: 0 6px 14px rgba(21,21,244,.14); font-size: 18px; font-weight: 700; cursor: pointer; touch-action: manipulation; transition: opacity .18s ease, transform .18s ease; }
+.send-continue:active { transform: scale(.985); }
+.send-continue:disabled { cursor: not-allowed; opacity: .42; }
+.send-help { margin: 15px auto 0; color: var(--ref-muted); font-size: 13px; line-height: 1.45; text-align: center; }
+.send-feedback { color: var(--ref-positive); }
+
+@media (max-width: 430px) {
+  .transfer-screen { padding-right: 18px; padding-left: 18px; }
+  .transfer-heading h1 { font-size: var(--font-size-header); }
+  .receive-warning { margin-top: 20px; padding: 14px 15px; }
+  .receive-warning p { font-size: 15px; }
+  .receive-qr { width: min(100%, 266px); margin-top: 47px; }
+  .receive-address { max-width: 315px; font-size: 16px; }
+  .receive-actions { gap: 9px; margin-top: 42px; }
+  .receive-actions button > span { width: 72px; height: 72px; border-radius: 22px; }
+  .send-screen .transfer-asset { margin-top: 36px; }
+  .send-form { margin-top: 39px; }
+}
+
+/* Restore the original numeric-only passcode keypad treatment. */
+.passcode-lock-screen { --passcode-disabled-control: #96979d; }
+.passcode-lock-screen .keypad-container { gap: 31px 18px; }
+.passcode-lock-screen .key { height: 54px; aspect-ratio: auto; border-radius: 0; color: var(--ref-ink); background: transparent; font-size: 37px; font-weight: 650; }
+.passcode-lock-screen .key:hover,
+.passcode-lock-screen .key:active,
+.passcode-lock-screen .key-action,
+.passcode-lock-screen .key-action:hover,
+.passcode-lock-screen .key-action:active { color: var(--ref-ink); background: transparent; }
+.passcode-lock-screen .key:active { color: var(--ref-blue); transform: scale(.95); }
+.passcode-lock-screen .fingerprint-key:disabled { color: var(--passcode-disabled-control); cursor: not-allowed; opacity: 1; }
+.passcode-lock-screen .fingerprint-key:disabled .fingerprint-icon { color: var(--passcode-disabled-control); opacity: 1; }
+.passcode-lock-screen .fingerprint-key:disabled .passcode-keypad-fingerprint-image { background-color: var(--passcode-disabled-control); opacity: 1; }
+.passcode-lock-screen .key-action:not(.fingerprint-key) { display: grid; place-items: center; color: var(--ref-ink); }
+.passcode-lock-screen .backspace-icon { display: grid; width: 34px; height: 34px; place-items: center; color: var(--passcode-disabled-control); }
+.passcode-lock-screen .backspace-icon svg { display: block; width: 34px; height: 34px; }
+.passcode-lock-screen .backspace-shape { fill: currentColor; }
+.passcode-lock-screen .backspace-close { fill: none; stroke: #fff; stroke-width: 2.15; stroke-linecap: round; }
+
+/* Use the supplied public fingerprint asset on the passcode screen. */
+.passcode-lock-screen .passcode-fingerprint-image {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background-color: var(--ref-blue);
+  -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat;
+  mask: url('/fingerprint%20(1).png') center / contain no-repeat;
+}
+
+.passcode-lock-screen .ri-fingerprint-2-line {
+  display: block;
+  width: 32px;
+  height: 32px;
+  color: var(--ref-blue);
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.passcode-lock-screen .passcode-keypad-fingerprint-image {
+  width: 48px;
+  height: 48px;
+  background-color: var(--ref-blue);
+}
+
+.passcode-lock-screen .passcode-dot {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #111214;
+  animation: passcode-dot-pop .22s cubic-bezier(.22,.8,.24,1) both;
+}
+
+/* Filled PIN boxes stay transparent; only the masked dot changes state. */
+.passcode-lock-screen .input-box,
+.passcode-lock-screen .input-box.filled {
+  display: grid;
+  place-items: center;
+  border-color: #b8c2d1;
+  background: transparent;
+  transition: border-color .2s ease;
+}
+
+.passcode-lock-screen .passcode-inputs.verified .input-box {
+  border-color: var(--ref-blue);
+}
+
+.passcode-lock-screen .passcode-inputs.verified .passcode-dot {
+  background: var(--ref-blue);
+  transition: background-color .18s ease;
+}
+
+/* Discover uses the same compact mobile scale as the rest of the wallet. */
+.discover-screen { padding-top: 5px; padding-bottom: 80px; }
+.discover-heading h1 { margin: 2px 0 13px; font-size: var(--font-size-header); }
+.dapp-search { height: 44px; gap: 8px; padding: 0 13px; font-size: 14px; }
+.dapp-search .app-icon { width: 20px; height: 20px; }
+.dapp-banner { height: 96px; margin-top: 13px; padding: 0 15px; border-radius: 15px; }
+.dapp-explore-image { top: -2px; right: -4px; width: min(45%, 185px); height: 102px; }
+.dapp-banner strong { font-size: 17px; }
+.banner-arrow { top: 33px; right: 7px; width: 26px; height: 26px; }
+.banner-arrow .app-icon { width: 20px; height: 20px; }
+.explore-title { gap: 5px; margin: 13px 0 13px; font-size: 18px; }
+.dapp-categories { gap: 6px; margin-bottom: 15px; }
+.dapp-categories button { height: 44px; padding: 0 12px; font-size: 14px; }
+.dapp-list { gap: 12px; }
+.dapp-row { min-height: 44px; gap: 11px; }
+.dapp-icon { width: 44px; height: 44px; flex-basis: 44px; border-radius: 12px; font-size: 20px; }
+.dapp-row > div { gap: 3px; }
+.dapp-row strong { font-size: 16px; }
+.dapp-row div span { font-size: 12px; }
+.view-dapps-button { height: 44px; gap: 8px; margin-top: 15px; padding: 0 15px; font-size: 14px; }
+.view-dapps-button .app-icon { width: 16px; height: 16px; }
+
+@media (max-width: 430px) {
+  .discover-screen { padding-top: 5px; }
+  .discover-heading h1 { font-size: var(--font-size-header); }
+  .dapp-banner { height: 92px; }
+  .dapp-explore-image { width: 46%; height: 98px; }
+  .dapp-banner strong { font-size: 16px; }
+  .dapp-icon { width: 44px; height: 44px; flex-basis: 44px; font-size: 19px; }
+}
+
+/* Markets matches the compact scale used by Discover. */
+.market-promos { gap: 9px; margin-top: 16px; }
+.market-promos button { height: 56px; gap: 7px; border-radius: 14px; font-size: 15px; }
+.promo-icon { font-size: 20px; }
+.market-section-title { margin: 21px 0 11px; font-size: 19px; }
+.top-traded-row { grid-auto-columns: 132px; gap: 9px; }
+.top-card { height: 144px; padding: 8px; border-radius: 16px; }
+.top-card .sparkline,
+.top-card .sparkline-empty { right: 8px; bottom: 8px; left: 8px; width: auto; height: 42px; }
+.top-card-name { font-size: 12px; }
+.top-card-name span { max-width: 90px; }
+.top-card .crypto-mark { width: 24px; height: 24px; flex-basis: 24px; font-size: 12px; }
+.top-card > strong { margin-top: 6px; font-size: 17px; }
+.top-card .market-change { margin-top: 2px; font-size: 13px; }
+.top-card .sparkline, .top-card .sparkline-empty { height: 42px; }
+.market-filters { gap: 6px; margin: 15px 0 13px; }
+.market-filters button { position: relative; height: 44px; padding: 0 12px; border-radius: 20px; background: transparent !important; font-size: 13px; isolation: isolate; }
+.market-filters button::before { position: absolute; z-index: -1; inset: 3px 0; border-radius: 19px; content: ''; background: var(--ref-surface); }
+.market-filters button.selected::before { background: #d1d1d6; }
+.market-filters .filter-star { width: 38px; }
+.market-filters .filter-star::before { right: 0; left: 0; }
+.market-sort { gap: 6px; margin-bottom: 11px; }
+.market-sort button { position: relative; height: 44px; gap: 3px; border-radius: 16px; background: transparent !important; font-size: 11px; isolation: isolate; }
+.market-sort button::before { position: absolute; z-index: -1; inset: 4px 0; border-radius: 14px; content: ''; background: var(--ref-surface); }
+.market-sort button:nth-child(2) span { font-size: 16px; }
+
+@media (max-width: 430px) {
+  .market-promos button { height: 52px; font-size: 14px; }
+  .top-traded-row { grid-auto-columns: 124px; }
+  .top-card { height: 136px; }
+}
+
+@keyframes passcode-dot-pop {
+  from { opacity: .25; transform: scale(.2); }
+  70% { opacity: 1; transform: scale(1.12); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 430px) {
+  .passcode-lock-screen .keypad-container { gap: clamp(18px, 3.8vh, 31px) 12px; }
+  .passcode-lock-screen .key { height: 42px; font-size: 31px; font-weight: 650; }
+}
+
+/* Biometric prompt: mirrors the native Trust Wallet authentication sheet. */
+.auth-lock-screen {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: 0;
+  background: #dfe1e5;
+}
+
+.auth-background-trust-mark {
+  position: absolute;
+  z-index: 1;
+  bottom: calc(min(58dvh, 510px) - 48px);
+  left: 50%;
+  width: 104px;
+  height: 104px;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.auth-trust-mark,
+.auth-trust-mark img {
+  display: block;
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+}
+
+.auth-dismiss-backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.auth-sheet {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: min(calc(100% - 4px), 430px);
+  height: min(58dvh, 510px);
+  min-height: 440px;
+  margin: 0 auto 2px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 42px 34px calc(24px + env(safe-area-inset-bottom));
+  border-radius: 8px 8px 0 0;
+  color: #f4f5f7;
+  background: #1e232d;
+  text-align: left;
+  animation: auth-sheet-rise .32s cubic-bezier(.22,.8,.24,1) both;
+}
+
+.auth-passcode-zone {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 46%;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.auth-sheet h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #f6f7f9;
+  font-size: clamp(24px, 6.2vw, 28px);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+}
+
+.auth-sheet p {
+  position: relative;
+  z-index: 1;
+  margin: 11px 0 0;
+  color: #f3f4f7;
+  font-size: clamp(17px, 4.7vw, 20px);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.auth-touch-button {
+  z-index: 1;
+  position: absolute;
+  bottom: max(68px, calc(9dvh + env(safe-area-inset-bottom)));
+  left: 50%;
+  display: flex;
+  width: 180px;
+  min-height: 130px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 50%;
+  color: #f6f7f9;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
+  transform: translateX(-50%);
+  touch-action: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.auth-touch-button .auth-fingerprint-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 58px;
+  height: 58px;
+  background-color: #f6f7f9;
+  -webkit-mask: url('/fingerprint%20(1).png') center / contain no-repeat;
+  mask: url('/fingerprint%20(1).png') center / contain no-repeat;
+  opacity: 1;
+  transform: scale(1);
+  transition: background-color .1s ease, filter .1s ease, transform .1s ease;
+}
+
+.auth-touch-button::after {
+  position: absolute;
+  z-index: 0;
+  bottom: 11px;
+  left: 50%;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224,236,255,.72) 0%, rgba(174,207,255,.32) 34%, rgba(122,174,255,.09) 58%, transparent 74%);
+  box-shadow: 0 0 19px rgba(181,213,255,.45), 0 0 42px rgba(127,177,255,.26);
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) scale(.62);
+  transition: opacity .08s ease, transform .12s ease;
+}
+
+.auth-touch-button.holding .auth-fingerprint-image {
+  background-color: #fff;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 13px rgba(211,229,255,1));
+  animation: none;
+}
+
+.auth-touch-button.holding::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  animation: biometric-sensor-halo .33s ease-out infinite alternate;
+}
+
+.auth-cancel {
+  z-index: 1;
+  position: absolute;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  left: 34px;
+  padding: 10px 0;
+  color: #f5f6f8;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-touch-button:focus-visible,
+.auth-cancel:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.auth-touch-button:disabled,
+.auth-cancel:disabled {
+  cursor: default;
+}
+
+@keyframes biometric-touch-glow {
+  0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 12px rgba(211,229,255,.98)) drop-shadow(0 0 26px rgba(164,202,255,.78)); }
+  50% { opacity: 1; transform: scale(1.08); filter: drop-shadow(0 0 7px rgba(255,255,255,1)) drop-shadow(0 0 19px rgba(211,229,255,1)) drop-shadow(0 0 38px rgba(164,202,255,.92)); }
+}
+
+@keyframes biometric-sensor-halo {
+  from { opacity: .72; transform: translateX(-50%) scale(.94); }
+  to { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+/* The requested RiFingerprint2Line stays compact and black in the passcode action. */
+.passcode-lock-screen .biometric-icon {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #16171a;
+  border-radius: 50%;
+  color: #16171a;
+  background: #fff;
+}
+
+.passcode-lock-screen .ri-fingerprint-2-line {
+  width: 12px;
+  height: 12px;
+  color: #16171a;
+  stroke-width: 1.75;
+}
+
+@media (max-width: 430px) {
+  .auth-sheet {
+    height: 58dvh;
+    min-height: 420px;
+    padding: 39px 28px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .auth-background-trust-mark { bottom: calc(58dvh - 48px); width: 94px; height: 94px; }
+  .auth-trust-mark, .auth-trust-mark img { width: 94px; height: 94px; }
+  .auth-cancel { bottom: calc(16px + env(safe-area-inset-bottom)); left: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-sheet,
+  .auth-touch-button.holding .auth-fingerprint-image,
+  .auth-touch-button.holding::after { animation: none; opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* Settings follows the supplied Trust Wallet reference: a single, light, scrollable list. */
+.settings-screen {
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: max(16px, env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  color: #242529;
+  background: #fff;
+  scrollbar-width: none;
+  animation: settings-screen-enter .24s cubic-bezier(.22, .8, .24, 1) both;
+}
+
+.settings-screen::-webkit-scrollbar { display: none; }
+
+/* Wallet-created confirmation: the supplied SVG stays vector-sharp at its smaller scale. */
+.wallet-ready-screen {
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  padding: max(24px, env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+  color: var(--ref-ink);
+  background: #fff;
+  text-align: center;
+}
+
+.wallet-ready-skip {
+  z-index: 2;
+  align-self: flex-end;
+  min-width: 66px;
+  min-height: 48px;
+  padding: 0 19px;
+  border-radius: 999px;
+  color: #25262a;
+  background: var(--ref-surface);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.wallet-ready-art {
+  position: relative;
+  z-index: 1;
+  width: min(42vw, 210px);
+  height: 250px;
+  margin-top: 98px;
+}
+
+.wallet-ready-illustration {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: wallet-ready-illustration-enter .42s cubic-bezier(.22, .8, .24, 1) both;
+}
+
+.wallet-ready-bug-trail {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.wallet-ready-bug-trail i {
+  --trail-opacity: .78;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(71, 76, 180, .66);
+  opacity: 0;
+  offset-anchor: 50% 50%;
+  offset-path: path('M 88 -10 C 47 -59 -36 -64 -73 -18 C -108 26 -67 81 -17 58 C 29 37 35 -26 -12 -37 C -59 -47 -72 15 -43 42 C -14 69 53 38 88 -10');
+  offset-rotate: auto;
+  will-change: offset-distance, opacity;
+  animation: wallet-ready-bug-tail 1.42s linear 3.32s infinite;
+}
+
+.wallet-ready-bug-trail i:nth-child(2) { --trail-opacity: .58; width: 1.75px; height: 1.75px; animation-delay: 3.4s; }
+.wallet-ready-bug-trail i:nth-child(3) { --trail-opacity: .38; width: 1.5px; height: 1.5px; animation-delay: 3.48s; }
+.wallet-ready-bug-trail i:nth-child(4) { --trail-opacity: .22; width: 1.25px; height: 1.25px; animation-delay: 3.56s; }
+
+.wallet-ready-bug-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  offset-anchor: 50% 50%;
+  offset-path: path('M 88 -10 C 47 -59 -36 -64 -73 -18 C -108 26 -67 81 -17 58 C 29 37 35 -26 -12 -37 C -59 -47 -72 15 -43 42 C -14 69 53 38 88 -10');
+  offset-rotate: auto;
+  will-change: offset-distance, opacity;
+  animation: wallet-ready-bug-appear .12s ease-out 3.12s both, wallet-ready-bug-alpha 1.42s linear 3.24s infinite;
+}
+
+.wallet-ready-bug-orbit img {
+  display: block;
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+  will-change: transform;
+  animation: wallet-ready-bug-flutter .15s ease-in-out 2.77s infinite alternate;
+}
+
+.wallet-ready-copy {
+  position: relative;
+  z-index: 1;
+  margin-top: 17px;
+}
+
+.wallet-ready-copy h1 {
+  margin: 0;
+  color: #3b3c40;
+  font-size: clamp(24px, 5.5vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+}
+
+.wallet-ready-copy p {
+  margin: 12px 0 0;
+  color: #707176;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.wallet-ready-fund {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 495px;
+  min-height: 60px;
+  margin-top: auto;
+  border-radius: 999px;
+  color: #fff;
+  background: #1515f4;
+  box-shadow: 0 8px 20px rgba(21, 21, 244, .2);
+  font-size: 18px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.wallet-ready-confetti {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@keyframes wallet-ready-illustration-enter {
+  from { opacity: 0; transform: translateY(24px) scale(.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes wallet-ready-bug-appear {
+  to { opacity: 1; }
+}
+
+@keyframes wallet-ready-bug-alpha {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+
+@keyframes wallet-ready-bug-tail {
+  from { offset-distance: 0%; opacity: var(--trail-opacity); }
+  to { offset-distance: 100%; opacity: var(--trail-opacity); }
+}
+
+@keyframes wallet-ready-bug-flutter {
+  from { transform: rotate(-7deg) scale(.92); }
+  to { transform: rotate(7deg) scale(1.05); }
+}
+
+.settings-header {
+  display: grid;
+  min-height: 44px;
+  padding: 0 18px;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+}
+
+.settings-header h1 {
+  margin: 0;
+  color: #242529;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.settings-back-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin-left: -6px;
+  padding: 0;
+  place-items: center start;
+  border: 0;
+  color: #616266;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.settings-back-button:active,
+.settings-row:active { opacity: .58; }
+
+.settings-back-button:focus-visible,
+.settings-row:focus-visible {
+  outline: 2px solid #1515f4;
+  outline-offset: -2px;
+}
+
+.settings-group { margin: 0; }
+.settings-dark-mode-group { margin-top: 18px; border-bottom: 1px solid #ececef; }
+
+.settings-divider {
+  height: 1px;
+  margin: 0;
+  background: #ececef;
+}
+
+.settings-row {
+  display: flex;
+  width: 100%;
+  min-height: 68px;
+  align-items: center;
+  gap: 18px;
+  padding: 0 22px;
+  border: 0;
+  color: #252629;
+  background: transparent;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity .16s ease;
+  touch-action: manipulation;
+}
+
+.settings-row-icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  color: #696a6e;
+}
+
+.settings-row > span { min-width: 0; }
+.settings-dark-mode-row { min-height: 76px; }
+
+.settings-switch {
+  position: relative;
+  width: 64px;
+  height: 38px;
+  margin-left: auto;
+  flex: 0 0 76px;
+  border-radius: 999px;
+  background: #b2b2b5;
+  transition: background-color .2s ease;
+}
+
+.settings-switch::after {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  content: '';
+  transition: transform .2s cubic-bezier(.22, .8, .24, 1);
+}
+
+.settings-switch.enabled { background: #1515f4; }
+.settings-switch.enabled::after { transform: translateX(26px); }
+
+.settings-alert-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin-left: -15px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #ef1e27;
+}
+
+@keyframes settings-screen-enter {
+  from { opacity: .65; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 430px) {
+  .settings-screen { padding-top: max(14px, env(safe-area-inset-top)); }
+  .settings-header { padding: 0 16px; }
+  .settings-header h1 { font-size: 19px; }
+  .settings-back-button { margin-left: -6px; }
+  .settings-dark-mode-group { margin-top: 16px; }
+  .settings-row { min-height: 62px; gap: 16px; padding: 0 20px; font-size: 16px; }
+  .settings-dark-mode-row { min-height: 70px; }
+  .settings-row-icon { width: 24px; height: 24px; flex-basis: 24px; }
+  .settings-switch { width: 58px; height: 34px; flex-basis: 58px; }
+  .settings-switch::after { top: 5px; left: 5px; width: 24px; height: 24px; }
+  .settings-switch.enabled::after { transform: translateX(24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-screen { animation: none; }
+  .settings-row,
+  .settings-switch,
+  .settings-switch::after { transition: none; }
+  .wallet-ready-bug-orbit,
+  .wallet-ready-bug-orbit img,
+  .wallet-ready-bug-trail i { animation: none; }
+  .wallet-ready-bug-orbit { opacity: 1; offset-path: none; transform: none; }
+  .wallet-ready-bug-trail { display: none; }
+}
+
+/* Perps: central infinity-navigation destination. */
+.perps-trading-screen { min-height: calc(100dvh - 26px); padding: 16px 0 196px; color: var(--ref-ink); background: #fff; }
+.perps-header { position: relative; display: grid; min-height: var(--top-control-size); grid-template-columns: 1fr auto 1fr; align-items: center; }
+.perps-header-actions { display: flex; grid-column: 1; align-items: center; gap: clamp(12px, 2.9vw, 20px); }
+.perps-header h1 { position: absolute; z-index: 1; left: 50%; margin: 0; color: var(--ref-ink); font-size: var(--font-size-header); font-weight: 700; letter-spacing: -.035em; line-height: 1; pointer-events: none; transform: translateX(-50%); white-space: nowrap; }
+.perps-header-button { display: grid; width: var(--top-control-size); height: var(--top-control-size); padding: 0; place-items: center; border: 0; border-radius: 50%; color: var(--ref-ink); background: var(--ref-surface); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 3px 10px rgba(24,25,32,.06); cursor: pointer; touch-action: manipulation; }
+.perps-header-button .app-icon { width: var(--ref-control-icon) !important; height: var(--ref-control-icon) !important; color: var(--ref-ink) !important; }
+.perps-header-button:active { opacity: .6; transform: scale(.95); }
+.perps-header-button:focus-visible, .perps-market-row:focus-visible, .perps-deposit-button:focus-visible, .perps-trade-actions button:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: 3px; }
+.perps-search-button { z-index: 2; grid-column: 3; justify-self: end; }
+
+.perps-deposit-promo { position: relative; margin-top: 36px; }
+.perps-deposit-promo > div { width: 100%; }
+.perps-deposit-promo h2 { width: 68%; margin: 0; color: var(--ref-ink); font-size: clamp(28px, 5.9vw, 32px); font-weight: 700; letter-spacing: -.045em; line-height: 1.2; }
+.perps-hero-mark { position: absolute; top: -5px; right: -2px; display: block; width: min(28vw, 140px); }
+.perps-hero-mark img { display: block; width: 100%; height: 90px; object-fit: contain; }
+.perps-deposit-button { display: flex; width: 100%; height: 64px; align-items: center; justify-content: center; margin: 22px auto 0; border-radius: 999px; color: #fff; background: #1111f5; box-shadow: 0 7px 16px rgba(17,17,245,.15); font-size: 20px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+.perps-deposit-button:active { background: #0909db; transform: scale(.985); }
+
+.perps-popular-section { margin-top: 56px; }
+.perps-popular-section > h2 { display: flex; align-items: center; gap: 4px; margin: 0; color: var(--ref-ink); font-size: 23px; font-weight: 650; letter-spacing: -.035em; line-height: 1; }
+.perps-popular-section > h2 .app-icon { transform: rotate(-90deg); stroke-width: 2.5; }
+.perps-market-list { display: flex; margin-top: 20px; flex-direction: column; gap: 13px; }
+.perps-market-row { display: grid; width: 100%; min-height: 76px; padding: 0; grid-template-columns: minmax(0, 1fr) minmax(93px,108px) minmax(108px,124px); align-items: center; gap: 8px; border: 0; color: var(--ref-ink); background: transparent; font-family: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.perps-market-row:active { opacity: .65; }
+.perps-market-identity { display: flex; min-width: 0; align-items: center; gap: 13px; }
+.perps-market-icon { position: relative; display: block; width: 52px; height: 52px; flex: 0 0 52px; }
+.perps-asset-mark { display: grid; width: 52px; height: 52px; place-items: center; overflow: hidden; border-radius: 50%; }
+.perps-bitcoin-mark { color: #fff; background: #f7931a; font-family: Arial, sans-serif; font-size: 37px; font-weight: 700; line-height: 1; }
+.perps-ethereum-mark { background: #edf0f2; }
+.perps-ethereum-mark svg { width: 26px; height: 35px; }
+.perps-spcx-mark { color: #fff; background: #131519; }
+.perps-spcx-mark svg { width: 44px; height: 44px; }
+.perps-skhynix-mark { background: #fff; }
+.perps-skhynix-mark svg { width: 47px; height: 35px; }
+.perps-market-icon .perps-venue-badge { right: -1px; bottom: -1px; width: 20px; height: 20px; border-width: 2px; border-radius: 6px; }
+.perps-market-icon .perps-venue-badge svg { width: 13px; height: 13px; }
+.perps-market-copy { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.perps-market-copy > span { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.perps-market-copy strong { overflow: hidden; color: var(--ref-ink); font-size: 22px; font-weight: 650; letter-spacing: -.035em; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.perps-market-copy em { display: inline-flex; min-height: 26px; align-items: center; padding: 0 9px; border-radius: 999px; color: #77787d; background: #ececee; font-size: 14px; font-style: normal; font-weight: 650; line-height: 1; white-space: nowrap; }
+.perps-market-copy small { overflow: hidden; color: #74757a; font-size: 15px; font-weight: 500; letter-spacing: -.015em; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.perps-mini-chart { display: block; width: 100%; height: 56px; overflow: visible; shape-rendering: geometricPrecision; }
+.perps-mini-chart polygon { fill: var(--chart-negative-fill); }
+.perps-mini-chart polyline { fill: none; stroke: var(--chart-negative); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.perps-mini-chart circle { fill: var(--chart-negative); stroke: #fff; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.perps-mini-chart.positive polygon { fill: var(--chart-positive-fill); }
+.perps-mini-chart.positive polyline { stroke: var(--chart-positive); }
+.perps-mini-chart.positive circle { fill: var(--chart-positive); }
+.perps-market-price { display: flex; min-width: 0; flex-direction: column; align-items: flex-end; gap: 7px; }
+.perps-market-price strong { color: var(--ref-ink); font-size: 22px; font-weight: 650; letter-spacing: -.04em; line-height: 1; white-space: nowrap; }
+.perps-market-price small { color: #c9162e; font-size: 16px; font-weight: 500; line-height: 1; white-space: nowrap; }
+.perps-market-price.positive small { color: #08a64a; }
+
+.perps-category-section { margin-top: 52px; }
+.perps-category-section > h2 { display: flex; align-items: center; gap: 4px; margin: 0; color: var(--ref-ink); font-size: 23px; font-weight: 650; letter-spacing: -.035em; line-height: 1; }
+.perps-category-section > h2 .app-icon { transform: rotate(-90deg); stroke-width: 2.5; }
+.perps-category-list { display: flex; margin-top: 19px; flex-direction: column; gap: 8px; }
+.perps-category-row { display: grid; width: 100%; min-height: 67px; padding: 0; grid-template-columns: 43px minmax(0,1fr) minmax(78px,104px) minmax(108px,124px); align-items: center; gap: 11px; border: 0; color: var(--ref-ink); background: transparent; font-family: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.perps-category-row:active { opacity: .65; }
+.perps-category-row .crypto-mark { width: 43px; height: 43px; flex-basis: 43px; font-size: 18px; }
+.perps-category-identity { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.perps-category-identity strong { overflow: hidden; color: var(--ref-ink); font-size: 19px; font-weight: 650; letter-spacing: -.025em; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.perps-category-identity small { overflow: hidden; color: var(--ref-muted); font-size: 14px; font-weight: 500; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.perps-category-price { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.perps-category-price strong { color: var(--ref-ink); font-size: 19px; font-weight: 650; letter-spacing: -.03em; line-height: 1; white-space: nowrap; }
+.perps-category-price small { color: var(--ref-negative); font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; }
+.perps-category-price.positive small { color: var(--ref-positive); }
+.perps-mini-chart.compact { min-width: 0; height: 43px; }
+.perps-mini-chart-loading { display: block; width: 100%; height: 56px; border-radius: 5px; background: linear-gradient(90deg, rgba(213,216,221,.12), rgba(213,216,221,.34), rgba(213,216,221,.12)); background-size: 200% 100%; animation: perps-chart-loading 1.25s ease-in-out infinite; }
+.perps-mini-chart-loading.compact { height: 43px; }
+
+@keyframes perps-chart-loading {
+  to { background-position: -200% 0; }
+}
+
+.perps-nav-item .app-icon { width: clamp(21px, 3.25vw, 23px) !important; height: clamp(21px, 3.25vw, 23px) !important; }
+
+.perps-trade-actions { position: fixed; z-index: 19; bottom: 121px; left: 50%; display: grid; width: min(calc(100% - 48px),614px); height: 62px; grid-template-columns: 1fr 1fr; gap: 17px; transform: translateX(-50%); }
+.perps-trade-actions button { display: flex; align-items: center; justify-content: center; gap: 9px; border-radius: 999px; color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -.025em; cursor: pointer; touch-action: manipulation; }
+.perps-trade-actions button span { font-size: 25px; font-weight: 500; line-height: 1; }
+.perps-long-button { background: #08af45; box-shadow: 0 8px 18px rgba(8,175,69,.15); }
+.perps-short-button { background: #d41116; box-shadow: 0 8px 18px rgba(212,17,22,.15); }
+.perps-trade-actions button:active { transform: scale(.98); }
+
+@media (min-width: 431px) {
+  .perps-header { min-height: clamp(66px, 11.87vw, 82px); }
+  .perps-header-button { width: clamp(66px, 11.87vw, 82px); height: clamp(66px, 11.87vw, 82px); }
+}
+
+@media (max-width: 430px) {
+  .perps-trading-screen { min-height: calc(100dvh - 20px); padding-top: 16px; padding-bottom: 165px; }
+  .perps-header { min-height: var(--top-control-size); }
+  .perps-header-actions { gap: 7px; }
+  .perps-header h1 { font-size: var(--font-size-header); }
+  .perps-deposit-promo { margin-top: 29px; }
+  .perps-deposit-promo h2 { width: 70%; font-size: clamp(26px,6.8vw,29px); }
+  .perps-hero-mark { top: -3px; right: -2px; width: min(29vw,120px); }
+  .perps-hero-mark img { height: 78px; }
+  .perps-deposit-button { height: 54px; margin-top: 20px; font-size: 18px; }
+  .perps-popular-section { margin-top: 45px; }
+  .perps-popular-section > h2 { font-size: 22px; }
+  .perps-market-list { margin-top: 17px; gap: 9px; }
+  .perps-market-row { min-height: 65px; grid-template-columns: minmax(0,1fr) minmax(72px,84px) minmax(88px,101px); gap: 6px; }
+  .perps-market-identity { gap: 10px; }
+  .perps-market-icon, .perps-asset-mark { width: 42px; height: 42px; flex-basis: 42px; }
+  .perps-bitcoin-mark { font-size: 30px; }
+  .perps-ethereum-mark svg { width: 21px; height: 29px; }
+  .perps-spcx-mark svg { width: 35px; height: 35px; }
+  .perps-skhynix-mark svg { width: 41px; height: 31px; }
+  .perps-market-icon .perps-venue-badge { width: 18px; height: 18px; border-radius: 5px; }
+  .perps-market-icon .perps-venue-badge svg { width: 12px; height: 12px; }
+  .perps-market-copy { gap: 4px; }
+  .perps-market-copy > span { gap: 5px; }
+  .perps-market-copy strong { font-size: 19px; }
+  .perps-market-copy em { min-height: 23px; padding: 0 7px; font-size: 12px; }
+  .perps-market-copy small { font-size: 13px; }
+  .perps-mini-chart { height: 49px; }
+  .perps-market-price { gap: 4px; }
+  .perps-market-price strong { font-size: 19px; }
+  .perps-market-price small { font-size: 14px; }
+  .perps-category-section { margin-top: 43px; }
+  .perps-category-section > h2 { font-size: 21px; }
+  .perps-category-list { margin-top: 15px; gap: 5px; }
+  .perps-category-row { min-height: 57px; grid-template-columns: 37px minmax(0,1fr) minmax(58px,73px) minmax(88px,101px); gap: 8px; }
+  .perps-category-row .crypto-mark { width: 37px; height: 37px; flex-basis: 37px; font-size: 15px; }
+  .perps-category-identity { gap: 4px; }
+  .perps-category-identity strong { font-size: 16px; }
+  .perps-category-identity small { font-size: 12px; }
+  .perps-category-price { gap: 4px; }
+  .perps-category-price strong { font-size: 16px; }
+  .perps-category-price small { font-size: 12px; }
+  .perps-mini-chart.compact, .perps-mini-chart-loading.compact { height: 37px; }
+  .perps-nav-item .app-icon { width: 21px !important; height: 21px !important; }
+  .perps-trade-actions { bottom: 91px; width: calc(100% - 36px); height: 54px; gap: 12px; }
+  .perps-trade-actions button { gap: 6px; font-size: 19px; }
+  .perps-trade-actions button span { font-size: 22px; }
+}
+
+/* Reference-matched send flow. */
+.send-screen { padding-top: max(20px, env(safe-area-inset-top)); }
+.send-screen .transfer-heading { min-height: 50px; }
+.send-screen .transfer-heading h1 { font-size: var(--font-size-header); font-weight: 700; }
+.send-screen .send-form { max-width: none; margin: 34px 0 0; }
+.send-screen .send-field { margin: 0; }
+.send-screen .send-field > span { margin-bottom: 13px; color: #606166; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+.send-screen .send-address-input { min-height: 68px; gap: 0; padding: 0 11px 0 18px; border: 3px solid var(--ref-blue); border-radius: 12px; background: #fff; box-shadow: none; }
+.send-screen .send-address-input:focus-within { border-color: var(--ref-blue); box-shadow: none; }
+.send-screen .send-address-input input { min-width: 0; padding: 0; color: var(--ref-ink); font-size: 18px; font-weight: 500; }
+.send-screen .send-address-input input::placeholder { color: #67686d; opacity: 1; }
+.send-screen .send-address-input button { flex: 0 0 auto; color: var(--ref-blue); background: transparent; }
+.send-screen .send-paste-button { min-width: 66px; height: 44px; padding: 0 7px; font-size: 17px; font-weight: 700; }
+.send-screen .send-inline-icon { display: grid; width: 39px; height: 44px; place-items: center; padding: 0; border-radius: 10px; }
+.send-screen .send-inline-icon .app-icon { width: 24px !important; height: 24px !important; stroke-width: 2.25; }
+.send-screen .send-field small.wallet-id-match { margin-top: 9px; color: var(--ref-positive); font-size: 14px; font-weight: 600; }
+.send-screen .send-field em { margin-top: 9px; color: var(--ref-negative); font-size: 14px; font-weight: 500; }
+.destination-network { margin-top: 28px; }
+.destination-network h2 { margin: 0 0 12px; color: #606166; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+.destination-network > div { display: inline-flex; min-height: 45px; align-items: center; gap: 8px; padding: 4px 13px 4px 6px; border-radius: 23px; color: #97989d; background: #f1f1f3; }
+.destination-network .crypto-mark { width: 35px; height: 35px; flex-basis: 35px; font-size: 16px; opacity: .74; }
+.destination-network strong { font-size: 17px; font-weight: 500; }
+.destination-network .app-icon { margin-left: 0; opacity: .55; transform: none; }
+.send-screen .send-amount-field { margin-top: 26px; }
+.send-screen .send-amount-input { min-height: 68px; gap: 0; padding: 0 14px 0 18px; border: 1px solid #9a9ba0; border-radius: 12px; background: #fff; box-shadow: none; }
+.send-screen .send-amount-input:focus-within { border-color: #77787c; box-shadow: none; }
+.send-screen .send-amount-input input { padding: 0; color: var(--ref-ink); font-size: 19px; font-weight: 600; }
+.send-screen .send-amount-input input::placeholder { color: var(--ref-ink); opacity: 1; }
+.send-screen .send-clear-button { display: grid; width: 36px; height: 36px; place-items: center; padding: 0; border-radius: 50%; color: #fff; background: #6d6e72; }
+.send-screen .send-clear-button .app-icon { width: 15px !important; height: 15px !important; stroke-width: 2.5; }
+.send-screen .send-amount-input strong { margin-left: 12px; color: #56575b; font-size: 16px; font-weight: 650; }
+.send-screen .send-max-button { min-width: 48px; height: 44px; margin-left: 8px; padding: 0; color: var(--ref-blue); background: transparent; font-size: 17px; font-weight: 700; }
+.send-screen .send-amount-field small { margin: 15px 0 0; color: #54555a; font-size: 15px; font-weight: 500; }
+.send-screen .send-continue { position: fixed; z-index: 30; bottom: max(20px, calc(14px + env(safe-area-inset-bottom))); left: 50%; width: min(calc(100% - 48px), 543px); min-height: 60px; margin: 0; border-radius: 31px; color: #fff; background: var(--ref-blue); box-shadow: none; font-size: 20px; font-weight: 700; transform: translateX(-50%); }
+.send-screen .send-continue:disabled { color: rgba(255,255,255,.94); background: #9b97f4; opacity: 1; }
+.send-screen .send-feedback { position: fixed; z-index: 31; right: 24px; bottom: max(89px, calc(83px + env(safe-area-inset-bottom))); left: 24px; min-height: 0; margin: 0; color: var(--ref-negative); font-size: 14px; font-weight: 600; }
+
+@media (max-width: 430px) {
+  .send-screen .transfer-heading h1 { font-size: var(--font-size-header); }
+  .send-screen .send-form { margin-top: 31px; }
+  .send-screen .send-field > span, .destination-network h2 { font-size: 16px; }
+  .send-screen .send-address-input { min-height: 66px; padding-right: 7px; padding-left: 17px; }
+  .send-screen .send-address-input input { font-size: 18px; }
+  .send-screen .send-paste-button { min-width: 62px; font-size: 16px; }
+  .send-screen .send-inline-icon { width: 36px; }
+  .send-screen .send-inline-icon .app-icon { width: 23px !important; height: 23px !important; }
+  .send-screen .send-amount-input { min-height: 66px; }
+  .send-screen .send-continue { width: calc(100% - 48px); min-height: 60px; }
+}
+
+/* One source of truth for standard currency icons: Perps Crypto rows are the reference. */
+:root {
+  --currency-icon-size: 43px;
+  --currency-detail-icon-size: var(--currency-icon-size);
+  --ref-token-icon-size: var(--currency-icon-size);
+  --top-trending-icon-size: 22px;
+  --chart-negative: #b40029;
+  --chart-negative-fill: rgba(180, 0, 41, .38);
+  --chart-positive: #008a38;
+  --chart-positive-fill: rgba(0, 138, 56, .38);
+}
+
+.crypto-mark,
+.token-mark,
+.perps-card .token-mark,
+.watchlist-row .token-mark,
+.perps-card-icon {
+  width: var(--currency-icon-size);
+  height: var(--currency-icon-size);
+  flex-basis: var(--currency-icon-size);
+}
+
+.crypto-mark { font-size: calc(var(--currency-icon-size) / 2); }
+.crypto-mark.large {
+  width: var(--currency-detail-icon-size);
+  height: var(--currency-detail-icon-size);
+  flex-basis: var(--currency-detail-icon-size);
+  font-size: calc(var(--currency-icon-size) / 2);
+}
+.top-card .crypto-mark { width: var(--top-trending-icon-size); height: var(--top-trending-icon-size); flex-basis: var(--top-trending-icon-size); font-size: calc(var(--top-trending-icon-size) / 2); }
+.perps-category-row { grid-template-columns: var(--currency-icon-size) minmax(0,1fr) minmax(78px,104px) minmax(108px,124px); }
+.perps-category-row .crypto-mark { width: var(--currency-icon-size); height: var(--currency-icon-size); flex-basis: var(--currency-icon-size); font-size: calc(var(--currency-icon-size) / 2); }
+.transfer-asset .crypto-mark,
+.destination-network .crypto-mark { width: var(--currency-icon-size); height: var(--currency-icon-size); flex-basis: var(--currency-icon-size); font-size: calc(var(--currency-icon-size) / 2); }
+
+@media (max-width: 430px) {
+  :root {
+    --currency-icon-size: 37px;
+    --top-trending-icon-size: 19px;
+  }
+
+  .perps-category-row { grid-template-columns: var(--currency-icon-size) minmax(0,1fr) minmax(58px,73px) minmax(88px,101px); }
+}
+
+/* Sticky Market filters and semantic promo icons. */
+.market-filter-panel {
+  position: sticky;
+  z-index: 16;
+  top: 0;
+  padding: 12px 0 10px;
+  background: #fff;
+}
+
+.markets-wallet-app { overflow-x: clip; }
+
+.market-filter-panel .market-filters {
+  margin: 0 0 8px;
+}
+
+.market-filter-panel .market-sort { margin: 0; }
+
+.market-sort button {
+  height: 33px;
+  min-height: 33px;
+  border-radius: 17px;
+  font-size: 11px;
+}
+
+.market-sort button::before {
+  inset: 0;
+  border-radius: 17px;
+}
+
+.market-sort button:nth-child(2) span { font-size: 15px; }
+.market-filters .filter-star .app-icon { width: 22px !important; height: 22px !important; }
+.promo-icon { display: grid; width: 20px; height: 20px; place-items: center; }
+.market-promo-predictions,
+.market-promo-meme-rush {
+  background-image: url('/market_icon.png');
+  background-repeat: no-repeat;
+}
+
+/* market_icon.png is a two-icon sprite: rocket on the left, TV on the right. */
+.market-promo-predictions { background-position: -34px -9px; background-size: 59.1px auto; }
+.market-promo-meme-rush { background-position: -5.4px -7.8px; background-size: 57.4px auto; }
+
+/* Home section titles use the same shared title scale as page headings. */
+.token-section h2,
+.perps-section h2,
+.home-section-heading,
+.earn-section h2,
+.watchlist-section h2 { font-size: var(--font-size-header); }
+.token-section h2 .app-icon,
+.perps-section h2 .app-icon,
+.home-section-heading .app-icon,
+.earn-section h2 .app-icon,
+.watchlist-section h2 .app-icon { width: var(--ref-chevron-icon) !important; height: var(--ref-chevron-icon) !important; }
+
+/* Global cached-asset search. Currency marks inherit the shared Perps reference size. */
+.search-wallet-app { height: auto; min-height: 100dvh; overflow: visible; padding: 0; }
+.search-screen { min-height: 100dvh; padding: max(20px, env(safe-area-inset-top)) 24px 46px; color: var(--ref-ink); background: #fff; }
+.search-screen-header { display: grid; grid-template-columns: minmax(0, 1fr) 54px; align-items: center; gap: 12px; }
+.global-search-input { display: flex; min-width: 0; height: 54px; align-items: center; gap: 12px; padding: 0 17px; border-radius: 28px; color: #9d9ea2; background: #292a2c; }
+.global-search-input:focus-within { box-shadow: 0 0 0 2px rgba(17,17,245,.32); }
+.global-search-input .app-icon { flex: 0 0 auto; color: #8e8f93; stroke-width: 2.15; }
+.global-search-input input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; color: #fff; background: transparent; font: inherit; font-size: 17px; font-weight: 500; letter-spacing: -.015em; }
+.global-search-input input::placeholder { color: #a5a5a8; opacity: 1; }
+.global-search-close { display: grid; width: 54px; height: 54px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #8e8f93; background: #292a2c; cursor: pointer; }
+.global-search-close:active { transform: scale(.95); }
+.search-recents { margin-top: 25px; }
+.search-watchlist { margin-top: 25px; }
+.search-watchlist .search-section-heading > span { display: grid; min-width: 24px; height: 24px; place-items: center; padding: 0 7px; border-radius: 12px; color: #65666b; background: #f0f0f2; font-size: 12px; font-weight: 650; }
+.search-watchlist-list { margin-top: 11px; }
+.search-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.search-section-heading h2,
+.search-results-section > h2 { margin: 0; color: var(--ref-ink); font-size: 20px; font-weight: 700; letter-spacing: -.035em; line-height: 1.1; }
+.search-section-heading button { padding: 0; border: 0; color: #77787d; background: transparent; font: inherit; font-size: 16px; font-weight: 500; cursor: pointer; }
+.search-recents-list { display: flex; gap: 18px; margin-top: 15px; overflow-x: auto; scrollbar-width: none; }
+.search-recents-list::-webkit-scrollbar { display: none; }
+.search-recent-item { display: flex; width: 58px; flex: 0 0 58px; align-items: center; gap: 7px; padding: 0; flex-direction: column; border: 0; color: var(--ref-ink); background: transparent; font: inherit; cursor: pointer; }
+.search-recent-item > span { width: 100%; overflow: hidden; font-size: 13px; font-weight: 650; line-height: 1.1; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.search-results-section { margin-top: 30px; }
+.search-results-list { display: flex; margin-top: 15px; flex-direction: column; }
+.search-result-row { display: grid; min-height: 68px; grid-template-columns: minmax(0, 1fr) 30px; align-items: center; gap: 7px; border-bottom: 1px solid rgba(28,29,32,.035); }
+.search-result-main { display: grid; width: 100%; min-width: 0; padding: 7px 0; grid-template-columns: var(--currency-icon-size) minmax(0, 1fr) 98px; align-items: center; gap: 12px; border: 0; color: var(--ref-ink); background: transparent; font: inherit; text-align: left; cursor: pointer; }
+.search-result-main:active { opacity: .65; }
+.search-result-copy,
+.search-result-price { display: flex; min-width: 0; flex-direction: column; }
+.search-result-copy { gap: 4px; }
+.search-result-copy strong { overflow: hidden; color: var(--ref-ink); font-size: 17px; font-weight: 650; letter-spacing: -.025em; line-height: 1.08; text-overflow: ellipsis; white-space: nowrap; }
+.search-result-copy small { overflow: hidden; color: #7a7b80; font-size: 13px; font-weight: 500; line-height: 1.08; text-overflow: ellipsis; white-space: nowrap; }
+.search-result-price { align-items: flex-end; gap: 4px; }
+.search-result-price strong { color: var(--ref-ink); font-size: 17px; font-weight: 650; letter-spacing: -.03em; line-height: 1.08; white-space: nowrap; }
+.search-result-price small { color: var(--ref-negative); font-size: 13px; font-weight: 550; line-height: 1.08; white-space: nowrap; }
+.search-result-price.positive small { color: var(--ref-positive); }
+.search-result-star { display: grid; width: 30px; height: 42px; place-items: center; padding: 0; border: 0; color: #9a9ba0; background: transparent; cursor: pointer; }
+.search-result-star .app-icon path { fill: none; stroke: currentColor; stroke-width: 1.55; }
+.search-result-star.active { color: #202124; }
+.search-result-star.active .app-icon path { fill: currentColor; stroke: currentColor; }
+.search-result-star:active { transform: scale(.9); }
+.search-empty-state { margin: 27px 0 0; color: #77787d; font-size: 15px; }
+.search-toast { position: fixed; z-index: 70; top: max(16px, env(safe-area-inset-top)); left: 50%; padding: 12px 18px; border-radius: 999px; color: #fff; background: #202124; box-shadow: 0 9px 25px rgba(0,0,0,.18); font-size: 14px; font-weight: 650; transform: translateX(-50%); }
+
+.dapp-search { width: 100%; border: 0; text-align: left; cursor: pointer; }
+
+@media (max-width: 430px) {
+  .search-screen { padding: max(16px, env(safe-area-inset-top)) 18px 36px; }
+  .search-screen-header { grid-template-columns: minmax(0, 1fr) 50px; gap: 9px; }
+  .global-search-input,
+  .global-search-close { height: 50px; }
+  .global-search-input { gap: 10px; padding: 0 14px; }
+  .global-search-input input { font-size: 15px; }
+  .global-search-input .app-icon { width: 21px; height: 21px; }
+  .global-search-close { width: 50px; }
+  .global-search-close .app-icon { width: 21px; height: 21px; }
+  .search-recents { margin-top: 21px; }
+  .search-watchlist { margin-top: 21px; }
+  .search-watchlist-list { margin-top: 8px; }
+  .search-section-heading h2,
+  .search-results-section > h2 { font-size: 18px; }
+  .search-section-heading button { font-size: 14px; }
+  .search-recents-list { gap: 14px; margin-top: 12px; }
+  .search-recent-item { width: 53px; flex-basis: 53px; gap: 6px; }
+  .search-recent-item > span { font-size: 12px; }
+  .search-results-section { margin-top: 25px; }
+  .search-results-list { margin-top: 10px; }
+  .search-result-row { min-height: 62px; grid-template-columns: minmax(0, 1fr) 28px; gap: 5px; }
+  .search-result-main { padding: 6px 0; grid-template-columns: var(--currency-icon-size) minmax(0,1fr) 87px; gap: 10px; }
+  .search-result-copy { gap: 3px; }
+  .search-result-copy strong,
+  .search-result-price strong { font-size: 15px; }
+  .search-result-copy small,
+  .search-result-price small { font-size: 12px; }
+  .search-result-star { width: 28px; height: 38px; }
+  .search-result-star .app-icon { width: 21px; height: 21px; }
+}
+
+/* Compact mobile swap flow. */
+.swap-wallet-app { height: auto; min-height: 100dvh; overflow: visible; padding: 0; }
+.swap-screen { display: flex; min-height: 100dvh; padding: max(18px, env(safe-area-inset-top)) 24px max(20px, env(safe-area-inset-bottom)); flex-direction: column; color: var(--ref-ink); background: #fff; }
+.swap-header { position: relative; display: grid; min-height: 48px; grid-template-columns: 48px minmax(72px, 1fr) auto 48px; align-items: center; gap: 8px; }
+.swap-header h1 { grid-column: 2; justify-self: center; min-width: 0; margin: 0; color: var(--ref-ink); font-size: 23px; font-weight: 700; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+.swap-round-button { display: grid; width: 48px; height: 48px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #222327; background: var(--ref-surface); cursor: pointer; }
+.swap-round-button:first-child { grid-column: 1; }
+.swap-round-button:last-child { grid-column: 4; }
+.swap-round-button:active,
+.swap-market-button:active,
+.swap-direction-button:active { transform: scale(.95); }
+.swap-round-button .back-arrow-icon { width: 25px; height: 25px; }
+.swap-controls-icon { width: 25px; height: 25px; }
+.swap-market-button { display: inline-flex; min-height: 48px; align-items: center; gap: 7px; justify-content: center; padding: 0 15px; border: 0; border-radius: 25px; color: #292a2d; background: var(--ref-surface); font: inherit; font-size: 17px; font-weight: 650; cursor: pointer; }
+.swap-market-button { grid-column: 3; }
+.swap-market-button .app-icon { stroke-width: 2.3; }
+.swap-form { position: relative; display: flex; margin-top: 12px; flex-direction: column; gap: 9px; }
+.swap-amount-card { position: relative; min-height: 130px; border-radius: 20px; background: #f3f3f5; }
+.swap-amount-display { position: absolute; top: 15px; left: 20px; display: inline-flex; min-width: 0; min-height: 48px; align-items: center; gap: 5px; padding: 0; border: 0; color: #202124; background: transparent; font: inherit; text-align: left; cursor: text; }
+.swap-amount-display strong { overflow: hidden; max-width: min(47vw, 235px); font-size: 42px; font-weight: 500; letter-spacing: -.065em; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.swap-amount-display i { width: 3px; height: 38px; margin-left: 1px; background: #1d1e20; }
+.swap-output-card .swap-amount-display { cursor: default; }
+.swap-output-card .swap-amount-display strong { color: #707176; }
+.swap-token-picker { position: absolute; top: 11px; right: 11px; display: inline-flex; max-width: 53%; min-height: 54px; align-items: center; gap: 8px; padding: 6px 15px 6px 7px; border: 0; border-radius: 29px; color: #232428; background: #fff; font: inherit; cursor: pointer; }
+.swap-token-picker strong { overflow: hidden; font-size: 18px; font-weight: 650; letter-spacing: -.025em; text-overflow: ellipsis; white-space: nowrap; }
+.swap-token-mark { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border-radius: 50%; }
+.swap-token-mark svg { width: 28px; height: 28px; }
+.swap-token-mark.hype { color: #102e2c; background: #4be2ba; }
+.swap-token-mark.whale { color: #356be9; background: linear-gradient(135deg, #e9f0ff, #fcfcff); }
+.swap-usd-value { position: absolute; bottom: 15px; left: 20px; display: inline-flex; align-items: center; gap: 4px; color: #28292d; font-size: 17px; font-weight: 500; letter-spacing: -.02em; }
+.swap-usd-value .app-icon { color: #48494d; stroke-width: 2.3; }
+.swap-available { position: absolute; right: 19px; bottom: 15px; display: inline-flex; align-items: center; gap: 6px; color: #313236; font-size: 15px; font-weight: 550; }
+.swap-available .app-icon { width: 17px; height: 17px; color: #54555a; stroke-width: 1.8; }
+.swap-direction-button { position: relative; z-index: 2; display: grid; width: 45px; height: 45px; align-self: center; place-items: center; margin: -27px 0; padding: 0; border: 1px solid #e1e1e3; border-radius: 50%; color: #616267; background: #fff; box-shadow: 0 2px 5px rgba(22,23,27,.16); cursor: pointer; }
+.swap-direction-button .app-icon { transform: none; }
+.swap-balance-warning { min-height: 18px; margin: 14px 0 0; color: var(--ref-negative); font-size: 14px; font-weight: 600; text-align: center; }
+.swap-keypad-area { display: grid; margin-top: auto; padding-top: 21px; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; }
+.swap-range-labels { display: flex; grid-row: 1; grid-column: 1 / -1; align-items: center; justify-content: space-between; color: #303135; font-size: 16px; font-weight: 600; }
+.swap-range { grid-row: 1; grid-column: 2; width: 100%; height: 28px; margin: 0; appearance: none; border-radius: 999px; background: transparent; cursor: pointer; }
+.swap-range::-webkit-slider-runnable-track { height: 21px; border-radius: 999px; background: #e9e9eb; }
+.swap-range::-webkit-slider-thumb { width: 31px; height: 31px; margin-top: -5px; appearance: none; border: 0; border-radius: 50%; background: #afb0b4; box-shadow: 0 2px 4px rgba(0,0,0,.16); }
+.swap-range::-moz-range-track { height: 21px; border: 0; border-radius: 999px; background: #e9e9eb; }
+.swap-range::-moz-range-thumb { width: 31px; height: 31px; border: 0; border-radius: 50%; background: #afb0b4; box-shadow: 0 2px 4px rgba(0,0,0,.16); }
+.swap-range-marks { display: flex; grid-column: 2; align-items: center; justify-content: space-around; margin-top: 7px; color: #a0a1a5; font-size: 12px; font-weight: 500; }
+.swap-keypad { display: grid; grid-column: 1 / -1; margin-top: 18px; grid-template-columns: repeat(3, 1fr); row-gap: 3px; }
+.swap-keypad button { display: grid; height: 66px; place-items: center; padding: 0; border: 0; color: #222327; background: transparent; font: inherit; font-size: 28px; font-weight: 650; letter-spacing: -.03em; cursor: pointer; }
+.swap-keypad button:active { color: var(--ref-blue); transform: scale(.94); }
+.swap-backspace-icon { width: 28px; height: 28px; }
+.swap-submit { position: fixed; z-index: 32; bottom: max(20px, calc(15px + env(safe-area-inset-bottom))); left: 50%; width: min(calc(100% - 48px), 543px); min-height: 56px; padding: 0; border: 0; border-radius: 30px; color: #fff; background: var(--ref-blue); box-shadow: 0 6px 14px rgba(21,21,244,.14); font: inherit; font-size: 18px; font-weight: 700; transform: translateX(-50%); }
+.swap-submit:disabled { color: #c4c5c8; background: #f3f3f4; box-shadow: none; }
+
+@media (max-width: 430px) {
+  .swap-screen { padding: max(16px, env(safe-area-inset-top)) 18px max(15px, env(safe-area-inset-bottom)); }
+  .swap-header { min-height: 44px; grid-template-columns: 44px minmax(72px, 1fr) auto 44px; gap: 6px; }
+  .swap-header h1 { font-size: 21px; }
+  .swap-round-button { width: 44px; height: 44px; }
+  .swap-round-button .back-arrow-icon { width: 23px; height: 23px; }
+  .swap-controls-icon { width: 23px; height: 23px; }
+  .swap-market-button { min-height: 44px; gap: 5px; padding: 0 12px; font-size: 16px; }
+  .swap-market-button .app-icon { width: 17px; height: 17px; }
+  .swap-form { margin-top: 11px; }
+  .swap-amount-card { min-height: 126px; border-radius: 19px; }
+  .swap-amount-display { top: 14px; left: 19px; min-height: 45px; }
+  .swap-amount-display strong { max-width: 46vw; font-size: 40px; }
+  .swap-amount-display i { height: 36px; }
+  .swap-token-picker { top: 11px; right: 11px; min-height: 52px; gap: 7px; padding: 5px 12px 5px 6px; }
+  .swap-token-picker strong { font-size: 17px; }
+  .swap-token-mark { width: var(--currency-icon-size); height: var(--currency-icon-size); flex-basis: var(--currency-icon-size); }
+  .swap-token-mark svg { width: 25px; height: 25px; }
+  .swap-usd-value { bottom: 14px; left: 19px; font-size: 15px; }
+  .swap-available { right: 18px; bottom: 14px; font-size: 14px; }
+  .swap-direction-button { width: 43px; height: 43px; margin: -26px 0; }
+  .swap-direction-button .app-icon { width: 22px; height: 22px; }
+  .swap-keypad-area { padding-top: 18px; grid-template-columns: 40px minmax(0, 1fr) 40px; }
+  .swap-range-labels { font-size: 15px; }
+  .swap-range::-webkit-slider-runnable-track { height: 20px; }
+  .swap-range::-webkit-slider-thumb { width: 29px; height: 29px; margin-top: -4px; }
+  .swap-range::-moz-range-track { height: 20px; }
+  .swap-range::-moz-range-thumb { width: 29px; height: 29px; }
+  .swap-range-marks { margin-top: 7px; font-size: 12px; }
+  .swap-keypad { margin-top: 15px; row-gap: 1px; }
+  .swap-keypad button { height: 60px; font-size: 26px; }
+  .swap-backspace-icon { width: 26px; height: 26px; }
+  .swap-submit { width: calc(100% - 36px); min-height: 53px; font-size: 17px; }
+}
+
+/* Trust Wallet uses its official shield on a white rounded-square app tile. */
+.wallet-glyph { color: inherit; background: #fff; box-shadow: 0 3px 10px rgba(20, 25, 40, .12); }
+.wallet-glyph img { width: 68%; height: 68%; }
+.wallet-shield { border-radius: 9px; border-color: #e7e7e9; background: #fff; }
+.trust-wallet-icon img { display: block; width: 70%; height: 70%; object-fit: contain; }
+
+@media (max-width: 430px) {
+  .wallet-glyph { border-radius: 12px; }
+}
+
+/* Wallet editor keeps the same compact mobile rhythm as the wallet manager. */
+.main-wallet-card { display: flex; min-height: 64px; align-items: center; padding: 0; overflow: hidden; }
+.wallet-card-select { display: flex; min-width: 0; min-height: 64px; flex: 1 1 auto; align-items: center; padding: 8px 6px 8px 17px; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.wallet-card-select:active, .wallet-card-menu:active { opacity: .6; }
+.wallet-card-select:focus-visible, .wallet-card-menu:focus-visible, .wallet-edit-back:focus-visible, .wallet-name-clear:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: -2px; }
+.wallet-card-select .main-wallet-title { min-width: 0; }
+.wallet-card-menu { display: grid; width: 44px; height: 44px; margin-right: 5px; padding: 0; place-items: center; flex: 0 0 44px; border: 0; border-radius: 50%; color: #55565b; background: transparent; cursor: pointer; touch-action: manipulation; }
+.wallet-more-icon { width: 23px; height: 23px; }
+
+.wallet-edit-screen { min-height: 100dvh; padding: 20px 20px max(32px, env(safe-area-inset-bottom)); color: var(--ref-ink); background: #fff; animation: wallets-slide-in .24s cubic-bezier(.22,.8,.24,1) both; }
+.wallet-edit-header { display: grid; min-height: 48px; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; }
+.wallet-edit-header h1 { overflow: hidden; margin: 0; color: var(--ref-ink); font-size: var(--font-size-header); font-weight: 650; letter-spacing: -.025em; line-height: 1.1; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.wallet-edit-back, .wallet-edit-delete { display: grid; width: 44px; height: 44px; place-items: center; padding: 0; color: #54555a; }
+.wallet-edit-back { justify-items: start; border: 0; border-radius: 50%; background: transparent; cursor: pointer; touch-action: manipulation; }
+.wallet-edit-back .back-arrow-icon { width: 28px; height: 28px; }
+.wallet-edit-delete { justify-self: end; border: 0; color: #5c5d61; background: transparent; cursor: pointer; touch-action: manipulation; }
+.wallet-edit-delete:active { transform: scale(.94); }
+.wallet-trash-icon { width: 29px; height: 29px; }
+.wallet-edit-form { margin-top: 27px; }
+.wallet-name-label { display: block; margin-bottom: 8px; color: #636469; font-size: 15px; font-weight: 600; letter-spacing: -.015em; }
+.wallet-name-input-wrap { display: flex; min-height: 64px; align-items: center; padding: 0 10px 0 17px; border: 1px solid #9c9da1; border-radius: 10px; background: #fff; transition: border-color .18s ease, box-shadow .18s ease; }
+.wallet-name-input-wrap:focus-within { border-color: var(--ref-blue); box-shadow: 0 0 0 2px rgba(21,21,244,.12); }
+.wallet-name-input-wrap input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; color: var(--ref-ink); background: transparent; font: inherit; font-size: 20px; font-weight: 600; letter-spacing: -.03em; }
+.wallet-name-clear { display: grid; width: 22px; height: 22px; margin-left: 5px; padding: 0; place-items: center; flex: 0 0 22px; border: 0; border-radius: 50%; color: #fff; background: #77787d; cursor: pointer; touch-action: manipulation; }
+.wallet-name-clear .app-icon { width: 14px !important; height: 14px !important; }
+.wallet-name-clear:active { transform: scale(.94); }
+.wallet-name-save-note { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wallet-backups { margin-top: 36px; }
+.wallet-backups h2 { margin: 0 0 11px; color: #65666b; font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+.wallet-backup-row { display: grid; min-height: 60px; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: 11px; }
+.wallet-backup-icon { width: 27px; height: 27px; color: #626368; }
+.wallet-backup-icon { display: block; object-fit: contain; }
+.wallet-google-drive-icon { width: 23px; height: 23px; filter: grayscale(1); opacity: .62; }
+.wallet-manual-icon { width: 22px; height: 22px; }
+.wallet-backup-row strong { color: #27282c; font-size: 19px; font-weight: 600; letter-spacing: -.025em; }
+.wallet-backup-row > span { color: #b40017; font-size: 15px; font-weight: 650; white-space: nowrap; }
+.wallet-google-backup-row { width: 100%; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.wallet-google-backup-row:active { opacity: .68; }
+
+/* Incorrect passcode feedback. */
+.passcode-lock-screen .passcode-inputs.error .input-box,
+.passcode-lock-screen .passcode-inputs.error .input-box.filled {
+  border-color: #e52e45 !important;
+  background: transparent !important;
+}
+.passcode-lock-screen .passcode-inputs.error .passcode-dot { background: #e52e45 !important; }
+.passcode-lock-screen .passcode-inputs.shake { animation: passcode-error-shake .28s ease-in-out both; }
+@keyframes passcode-error-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-7px); }
+  80% { transform: translateX(5px); }
+}
+
+/* Wallet deletion confirmation and seed-phrase reminder flow. */
+.wallet-delete-overlay { position: fixed; z-index: 80; inset: 0; display: flex; padding: 24px; background: rgba(0,0,0,.33); animation: wallet-delete-overlay-in .2s ease both; }
+.wallet-delete-overlay.confirm-open { align-items: center; justify-content: center; }
+.wallet-delete-overlay.backup-open { align-items: flex-end; justify-content: center; padding: 0; background: rgba(0,0,0,.48); }
+.wallet-delete-dialog { width: min(100%, 462px); padding: 26px 18px 27px; border-radius: 26px; background: #fff; box-shadow: 0 14px 38px rgba(20,20,30,.18); text-align: center; animation: wallet-delete-dialog-in .25s cubic-bezier(.22,.8,.24,1) both; }
+.wallet-delete-dialog h2 { margin: 0; color: #27282c; font-size: 18px; font-weight: 700; letter-spacing: -.035em; line-height: 1.22; }
+.wallet-delete-dialog p { margin: 11px 0 26px; color: #77787d; font-size: 15px; font-weight: 450; letter-spacing: -.02em; line-height: 1.35; }
+.wallet-delete-dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.wallet-delete-dialog-actions button { min-height: 45px; border: 0; border-radius: 24px; font: inherit; font-size: 16px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+.wallet-delete-cancel { color: #1011df; background: #e4e1ff; }
+.wallet-delete-confirm { color: #fff; background: #1011f5; }
+.wallet-delete-dialog-actions button:active,
+.wallet-backup-sheet button:active { transform: scale(.98); }
+.wallet-backup-sheet { position: relative; width: min(100%, 591px); min-height: 56dvh; padding: 27px 18px 22px; border-radius: 23px 23px 0 0; color: #202124; background: #fff; box-shadow: 0 -11px 30px rgba(20,20,30,.16); text-align: center; animation: wallet-backup-sheet-rise .34s cubic-bezier(.22,.8,.24,1) both; }
+.wallet-backup-close { position: absolute; top: 14px; right: 17px; display: grid; width: 32px; height: 32px; place-items: center; padding: 0; border: 0; color: #55565b; background: transparent; cursor: pointer; touch-action: manipulation; }
+.wallet-backup-art { display: flex; height: 225px; align-items: center; justify-content: center; margin: 15px auto 0; }
+.wallet-backup-art img { display: block; width: min(78vw, 208px); height: 100%; object-fit: contain; }
+.wallet-backup-sheet h2 { margin: 4px 0 8px; color: #202124; font-size: 23px; font-weight: 700; letter-spacing: -.045em; line-height: 1.12; }
+.wallet-backup-sheet p { margin: 0; color: #717278; font-size: 15px; font-weight: 450; letter-spacing: -.02em; line-height: 1.45; }
+.wallet-backup-primary,
+.wallet-backup-secondary { display: block; width: 100%; min-height: 56px; border: 0; border-radius: 30px; font: inherit; font-size: 15px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+.wallet-backup-primary { margin-top: 16px; color: #fff; background: #1111f5; }
+.wallet-backup-secondary { margin-top: 13px; color: #27282c; background: #ededee; }
+.wallet-proceed-anyway { display: block; margin: 25px auto 0; padding: 5px 12px; border: 0; color: #1111d9; background: transparent; font: inherit; font-size: 15px; font-weight: 650; cursor: pointer; touch-action: manipulation; }
+
+@keyframes wallet-delete-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wallet-delete-dialog-in { from { opacity: .6; transform: scale(.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes wallet-backup-sheet-rise { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Google Drive backup processing and failure flow. */
+.google-backup-flow { position: fixed; z-index: 92; inset: 0; display: flex; width: min(100%, 591px); min-height: 100dvh; margin: 0 auto; overflow: hidden; flex-direction: column; color: #17181b; background: #6b6b6b; animation: google-backup-screen-in .24s cubic-bezier(.22,.8,.24,1) both; }
+.google-backup-header { display: grid; min-height: 68px; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; padding: max(8px, env(safe-area-inset-top)) 20px 8px; background: #6b6b6b; }
+.google-backup-header button { display: grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 0; color: #5b5c61; background: transparent; cursor: pointer; touch-action: manipulation; }
+.google-backup-header button:active { transform: scale(.93); }
+.google-backup-header h1 { margin: 0; color: #17181b; font-size: 21px; font-weight: 700; letter-spacing: -.035em; line-height: 1; text-align: center; }
+.google-backup-processing { display: grid; flex: 1; place-items: center; }
+.google-backup-loader { display: flex; width: 64px; height: 64px; align-items: center; justify-content: center; gap: 4px; border-radius: 50%; background: rgba(103,103,103,.28); box-shadow: 0 8px 22px rgba(0,0,0,.04); }
+.google-backup-loader span { display: block; width: 5px; height: 5px; border-radius: 1px; background: #1414a5; animation: google-backup-dot-wave 1.5s ease-in-out infinite; }
+.google-backup-loader span:nth-child(2) { animation-delay: .12s; }
+.google-backup-loader span:nth-child(3) { animation-delay: .24s; }
+.google-backup-loader span:nth-child(4) { animation-delay: .36s; }
+.google-backup-error { width: min(100% - 40px, 390px); margin: auto; padding: 24px 22px 21px; border-radius: 20px; text-align: center; background: #fff; box-shadow: 0 12px 30px rgba(0,0,0,.18); animation: google-backup-error-in .25s ease both; }
+.google-backup-error-icon { display: grid; width: 38px; height: 38px; place-items: center; margin: 0 auto 13px; border-radius: 50%; color: #fff; background: #d92f45; font-size: 25px; font-weight: 700; line-height: 1; }
+.google-backup-error h2 { margin: 0; color: #242529; font-size: 20px; font-weight: 700; }
+.google-backup-error p { margin: 9px 0 20px; color: #6d6e74; font-size: 14px; line-height: 1.45; }
+.google-backup-retry, .google-backup-close { display: block; width: 100%; min-height: 48px; border: 0; border-radius: 25px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+.google-backup-retry { color: #fff; background: var(--ref-blue); }
+.google-backup-close { margin-top: 9px; color: #1718d8; background: #e9e7ff; }
+.google-backup-retry:active, .google-backup-close:active { transform: scale(.98); }
+@keyframes google-backup-screen-in { from { opacity: .7; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes google-backup-dot-wave { 0%, 18%, 100% { transform: translateY(0); } 9% { transform: translateY(-7px); } }
+@keyframes google-backup-error-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 430px) {
+  .wallet-card-select { padding-left: 15px; }
+  .wallet-edit-screen { padding-right: 18px; padding-left: 18px; }
+  .wallet-edit-form { margin-top: 25px; }
+  .wallet-name-input-wrap { min-height: 60px; padding-left: 16px; }
+  .wallet-name-input-wrap input { font-size: 19px; }
+  .wallet-backups { margin-top: 32px; }
+  .wallet-backups h2 { margin-bottom: 9px; font-size: 15px; }
+  .wallet-backup-row { min-height: 56px; gap: 10px; }
+  .wallet-backup-row strong { font-size: 18px; }
+  .wallet-backup-row > span { font-size: 14px; }
+  .google-backup-header { min-height: 62px; grid-template-columns: 44px minmax(0, 1fr) 44px; padding-right: 14px; padding-left: 14px; }
+  .google-backup-header h1 { font-size: 20px; }
+  .google-backup-error { width: calc(100% - 36px); padding: 21px 18px 18px; }
+  .google-backup-error h2 { font-size: 19px; }
+  .google-backup-error p { font-size: 14px; }
+  .wallet-delete-overlay { padding: 18px; }
+  .wallet-delete-dialog { padding: 24px 18px 26px; border-radius: 25px; }
+  .wallet-delete-dialog h2 { font-size: 18px; }
+  .wallet-delete-dialog p { margin-bottom: 25px; font-size: 15px; }
+  .wallet-delete-dialog-actions { gap: 14px; }
+  .wallet-delete-dialog-actions button { min-height: 44px; font-size: 15px; }
+  .wallet-backup-sheet { min-height: 57dvh; padding-right: 18px; padding-left: 18px; }
+  .wallet-backup-art { height: 210px; margin-top: 15px; }
+  .wallet-backup-sheet h2 { font-size: 22px; }
+  .wallet-backup-sheet p { font-size: 15px; }
+  .wallet-backup-primary,
+  .wallet-backup-secondary { min-height: 54px; font-size: 15px; }
+  .wallet-proceed-anyway { margin-top: 23px; font-size: 15px; }
+}
+
+/* Manual secret-phrase backup flow. */
+.wallet-manual-backup-row { width: 100%; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.wallet-manual-backup-row:active { opacity: .68; }
+.wallet-backup-complete { display: inline-flex; align-items: center; gap: 7px; color: var(--ref-positive) !important; }
+.wallet-backup-active { color: var(--ref-positive) !important; }
+.manual-backup-check { display: inline-grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border: 1px solid #b8b9bd; border-radius: 50%; color: #fff; background: #b8b9bd; font-size: 15px; font-weight: 700; line-height: 1; }
+.manual-backup-check.checked { border-color: var(--ref-blue); background: var(--ref-blue); }
+.wallet-backup-complete .manual-backup-check.checked { border-color: var(--ref-positive); background: var(--ref-positive); }
+.wallet-manual-backup-overlay { position: fixed; z-index: 86; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(20,20,25,.42); animation: wallet-manual-fade-in .2s ease both; }
+.wallet-manual-warning-sheet { position: relative; width: min(100%, 591px); min-height: 68dvh; padding: 20px 24px 24px; border-radius: 28px 28px 0 0; color: var(--ref-ink); background: #fff; box-shadow: 0 -14px 40px rgba(20,20,30,.18); text-align: center; animation: wallet-backup-sheet-rise .34s cubic-bezier(.22,.8,.24,1) both; }
+.wallet-manual-warning-sheet .wallet-backup-close { top: 17px; right: 18px; }
+.wallet-manual-warning-sheet .wallet-backup-art { height: 205px; margin-top: 13px; }
+.wallet-manual-warning-sheet .wallet-backup-art img { width: min(70vw, 190px); }
+.wallet-manual-eyebrow { margin: 4px 0 24px; color: #77787d; font-size: 16px; font-weight: 550; }
+.wallet-manual-warning-sheet h2 { margin: 0 0 25px; color: var(--ref-ink); font-size: 28px; font-weight: 750; letter-spacing: -.045em; line-height: 1.17; }
+.wallet-manual-acknowledgements { display: flex; flex-direction: column; gap: 14px; }
+.wallet-manual-acknowledgement { display: flex; width: 100%; min-height: 68px; align-items: center; gap: 14px; padding: 12px 16px; border: 0; border-radius: 15px; color: var(--ref-ink); background: #f1f1f3; font: inherit; font-size: 16px; font-weight: 500; line-height: 1.35; text-align: left; cursor: pointer; touch-action: manipulation; }
+.wallet-manual-acknowledgement:active { opacity: .72; }
+.wallet-manual-primary { display: block; width: 100%; min-height: 58px; border: 0; border-radius: 30px; color: #fff; background: var(--ref-blue); font: inherit; font-size: 18px; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+.wallet-manual-primary:disabled { color: #fff; background: #a39ff5; cursor: not-allowed; }
+.wallet-manual-warning-sheet .wallet-manual-primary { margin-top: 22px; }
+.wallet-manual-backup-screen { position: fixed; z-index: 87; inset: 0; display: flex; width: min(100%, 591px); min-height: 100dvh; margin: 0 auto; overflow-y: auto; padding-bottom: env(safe-area-inset-bottom); color: var(--ref-ink); background: #fff; flex-direction: column; animation: wallet-manual-screen-in .24s ease both; }
+.wallet-manual-backup-header { display: grid; min-height: 68px; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; padding: max(8px, env(safe-area-inset-top)) 20px 8px; color: #fff; background: var(--ref-blue); }
+.wallet-manual-backup-header h1 { margin: 0; color: #fff; font-size: 21px; font-weight: 700; letter-spacing: -.035em; line-height: 1; text-align: center; }
+.wallet-manual-backup-header button { display: grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 0; color: #fff; background: transparent; cursor: pointer; touch-action: manipulation; }
+.wallet-manual-backup-header button:last-child { justify-self: end; }
+.wallet-manual-backup-header button:active { transform: scale(.93); }
+.wallet-manual-light-header { color: var(--ref-ink); background: #fff; border-bottom: 0; }
+.wallet-manual-light-header h1 { color: var(--ref-ink); }
+.wallet-manual-light-header button { color: var(--ref-ink); }
+.secret-info-icon { width: 24px; height: 24px; display: block; color: #66676a; }
+.wallet-manual-warning-banner { display: flex; min-height: 72px; align-items: center; gap: 12px; margin: 24px 20px 0; padding: 12px 15px; border-radius: 15px; color: #8a5b1d; background: #fff0d5; }
+.wallet-manual-warning-banner > span { color: #dc941e; font-size: 19px; }
+.wallet-manual-warning-banner strong { min-width: 0; flex: 1; font-size: 14px; font-weight: 700; line-height: 1.3; }
+.wallet-manual-warning-banner .app-icon { color: #4d4e52; }
+.wallet-secret-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 34px; row-gap: 8px; margin: 34px 30px 0; }
+.wallet-secret-word { display: flex; min-height: 38px; align-items: center; justify-content: center; gap: 5px; padding: 0 12px; border: 0; border-radius: 6px; background: #f1f1f3; }
+.wallet-secret-word > span { width: auto; flex: 0 0 auto; color: var(--ref-ink); font-size: 17px; font-weight: 650; text-align: center; }
+.wallet-secret-word strong { color: var(--ref-ink); font-size: 17px; font-weight: 650; letter-spacing: -.02em; }
+.wallet-manual-footer-warning { display: flex; align-items: flex-start; gap: 10px; margin: auto 20px 0; padding: 8px 12px 7px; border-radius: 14px; color: #29251c; background: #fbf1d9; text-align: left; }
+.wallet-manual-footer-warning > .app-icon { flex: 0 0 18px; margin-top: 3px; color: #bd8b12; }
+.wallet-manual-footer-warning p { margin: 0; font-size: 14px; font-weight: 550; line-height: 1.3; }
+.wallet-manual-footer-warning button { margin-top: 3px; padding: 0; border: 0; color: #1011df; background: transparent; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.wallet-manual-screen-continue { width: calc(100% - 40px); margin: 22px 20px 20px; flex: 0 0 auto; }
+.wallet-manual-verify-copy { padding: 30px 24px 16px; text-align: center; }
+.wallet-manual-verify-copy h2 { margin: 0; color: var(--ref-ink); font-size: 23px; font-weight: 700; letter-spacing: -.04em; }
+.wallet-manual-verify-copy p { margin: 8px 0 0; color: var(--ref-muted); font-size: 15px; }
+.wallet-verification-list { display: flex; padding: 0 20px; flex-direction: column; gap: 16px; }
+.wallet-verification-row { display: flex; padding: 15px; border-radius: 16px; background: var(--ref-surface); flex-direction: column; gap: 12px; }
+.wallet-verification-row > strong { color: var(--ref-muted); font-size: 14px; font-weight: 700; }
+.wallet-verification-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wallet-verification-options button { min-height: 42px; padding: 0 8px; border: 1px solid var(--ref-line); border-radius: 12px; color: var(--ref-ink); background: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; touch-action: manipulation; }
+.wallet-verification-options button.selected { border-color: var(--ref-blue); color: #fff; background: var(--ref-blue); }
+.wallet-verification-error { margin: 16px 20px 0; color: var(--ref-negative); font-size: 14px; font-weight: 600; text-align: center; }
+.wallet-manual-verify-screen { width: 100%; max-width: none; padding: 0 0 env(safe-area-inset-bottom); background: #fff; }
+.wallet-manual-verify-screen .wallet-manual-backup-header { min-height: 68px; background: #fff; }
+.wallet-manual-verify-screen .wallet-manual-backup-header h1 { font-size: 21px; }
+.wallet-manual-verify-screen .wallet-manual-verify-copy { padding: 17px 22px 0; text-align: left; }
+.wallet-manual-verify-screen .wallet-manual-verify-copy p { margin: 0; color: var(--ref-muted); font-size: 15px; font-weight: 450; line-height: 1.45; }
+.wallet-manual-verify-screen .wallet-verification-list { padding: 0 22px; gap: 26px; margin-top: 28px; }
+.wallet-manual-verify-screen .wallet-verification-row { gap: 8px; padding: 0; border-radius: 0; background: transparent; }
+.wallet-manual-verify-screen .wallet-verification-row > strong { color: var(--ref-ink); font-size: 16px; font-weight: 650; }
+.wallet-manual-verify-screen .wallet-verification-options { gap: 14px; }
+.wallet-manual-verify-screen .wallet-verification-options button { min-height: 32px; padding: 0 6px; border: 0; border-radius: 5px; color: var(--ref-ink); background: #f1f1f3; font-size: 16px; font-weight: 650; }
+.wallet-manual-verify-screen .wallet-verification-options button.selected { color: #fff; background: var(--ref-blue); }
+.wallet-manual-verify-screen .wallet-manual-screen-continue { width: calc(100% - 36px); margin: auto 18px 18px; min-height: 55px; border-radius: 30px; }
+@keyframes wallet-manual-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wallet-manual-screen-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+
+@media (max-width: 430px) {
+  .wallet-manual-warning-sheet { min-height: 69dvh; padding: 16px 18px 20px; border-radius: 25px 25px 0 0; }
+  .wallet-manual-warning-sheet .wallet-backup-art { height: 190px; margin-top: 14px; }
+  .wallet-manual-eyebrow { margin-bottom: 19px; font-size: 15px; }
+  .wallet-manual-warning-sheet h2 { margin-bottom: 20px; font-size: 25px; }
+  .wallet-manual-acknowledgements { gap: 11px; }
+  .wallet-manual-acknowledgement { min-height: 61px; gap: 11px; padding: 10px 13px; font-size: 14px; }
+  .manual-backup-check { width: 23px; height: 23px; flex-basis: 23px; }
+  .wallet-manual-warning-sheet .wallet-manual-primary { margin-top: 18px; }
+  .wallet-manual-primary { min-height: 55px; font-size: 17px; }
+  .wallet-manual-backup-header { min-height: 62px; grid-template-columns: 44px minmax(0, 1fr) 44px; padding-right: 14px; padding-left: 14px; }
+  .wallet-manual-backup-header h1 { font-size: 20px; }
+  .wallet-manual-warning-banner { min-height: 66px; margin: 20px 18px 0; padding: 10px 12px; }
+  .wallet-manual-warning-banner strong { font-size: 13px; }
+  .wallet-secret-grid { column-gap: 14px; row-gap: 8px; margin: 34px 22px 0; }
+  .wallet-secret-word { min-height: 32px; gap: 7px; padding: 0 9px; border-radius: 5px; }
+  .wallet-secret-word > span { width: auto; flex-basis: auto; font-size: 16px; }
+  .wallet-secret-word strong { font-size: 16px; }
+  .wallet-manual-footer-warning { margin-right: 22px; margin-left: 22px; padding: 8px 12px 7px; }
+  .wallet-manual-footer-warning p,
+  .wallet-manual-footer-warning button { font-size: 14px; }
+  .wallet-manual-screen-continue { width: calc(100% - 36px); margin: 18px 18px 18px; }
+  .wallet-manual-verify-copy { padding: 25px 18px 15px; }
+  .wallet-manual-verify-copy h2 { font-size: 21px; }
+  .wallet-manual-verify-copy p { font-size: 14px; }
+  .wallet-verification-list { padding: 0 18px; gap: 12px; }
+  .wallet-verification-row { padding: 13px; gap: 10px; }
+  .wallet-verification-options button { min-height: 40px; font-size: 13px; }
+  .wallet-manual-verify-screen .wallet-manual-backup-header { min-height: 62px; }
+  .wallet-manual-verify-screen .wallet-manual-backup-header h1 { font-size: 20px; }
+  .wallet-manual-verify-screen .wallet-manual-verify-copy { padding: 17px 22px 0; }
+  .wallet-manual-verify-screen .wallet-manual-verify-copy p { font-size: 15px; }
+  .wallet-manual-verify-screen .wallet-verification-list { padding: 0 22px; gap: 26px; margin-top: 28px; }
+  .wallet-manual-verify-screen .wallet-verification-row { gap: 8px; }
+  .wallet-manual-verify-screen .wallet-verification-row > strong { font-size: 16px; }
+  .wallet-manual-verify-screen .wallet-verification-options { gap: 14px; }
+  .wallet-manual-verify-screen .wallet-verification-options button { min-height: 32px; font-size: 16px; }
+  .wallet-manual-verify-screen .wallet-manual-screen-continue { width: calc(100% - 36px); margin: auto 18px 18px; min-height: 55px; }
+}
+
+/* Full token list opened from the home screen. */
+.tokens-wallet-app { height: auto; min-height: 100dvh; overflow: visible; padding: 0; color: var(--ref-ink); background: #fff; }
+.tokens-screen { min-height: 100dvh; padding: 52px 24px 164px; color: var(--ref-ink); background: #fff; }
+.tokens-screen-header { display: grid; min-height: 48px; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; }
+.tokens-screen-header h1 { margin: 0; color: var(--ref-ink); font-size: 24px; font-weight: 650; letter-spacing: -.035em; line-height: 1; text-align: center; }
+.tokens-back-button,
+.tokens-filter-button { display: grid; width: 48px; height: 48px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #242529; background: var(--light-surface); cursor: pointer; touch-action: manipulation; }
+.tokens-filter-button { justify-self: end; }
+.tokens-back-button:active,
+.tokens-filter-button:active { transform: scale(.95); }
+.tokens-back-button:focus-visible,
+.tokens-filter-button:focus-visible,
+.tokens-screen-row:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: 3px; }
+.tokens-back-button .back-arrow-icon { width: 29px; height: 29px; }
+.tokens-filter-icon { width: 26px; height: 26px; }
+.tokens-search-field { display: flex; height: 68px; align-items: center; gap: 17px; margin-top: 27px; padding: 0 23px; border-radius: 36px; color: #66676c; background: #f0f0f2; }
+.tokens-search-field .app-icon { flex: 0 0 25px; stroke-width: 2.1; }
+.tokens-search-field input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; color: var(--ref-ink); background: transparent; font: inherit; font-size: 22px; font-weight: 450; letter-spacing: -.025em; }
+.tokens-search-field input::placeholder { color: #73747a; opacity: 1; }
+.tokens-screen-list { margin-top: 19px; }
+.tokens-screen-row { display: flex; width: 100%; min-height: 91px; align-items: center; gap: 17px; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; text-align: left; cursor: pointer; touch-action: manipulation; }
+.tokens-screen-row .token-mark { width: 59px; height: 59px; flex-basis: 59px; font-size: 27px; }
+.tokens-screen-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 6px; }
+.tokens-screen-copy strong { overflow: hidden; color: var(--ref-ink); font-size: 23px; font-weight: 650; letter-spacing: -.035em; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.tokens-screen-copy small { color: #77787d; font-size: 16px; font-weight: 450; letter-spacing: -.015em; line-height: 1; }
+.tokens-screen-value { display: flex; min-width: 76px; flex-direction: column; align-items: flex-end; gap: 7px; }
+.tokens-screen-value strong { color: #151619; font-size: 22px; font-weight: 650; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+.tokens-screen-value small { color: #77787d; font-size: 16px; font-weight: 450; line-height: 1; white-space: nowrap; }
+.tokens-empty-state { margin: 40px 0; color: #77787d; font-size: 17px; text-align: center; }
+
+@media (max-width: 430px) {
+  .tokens-screen { padding: 51px 22px 150px; }
+  .tokens-screen-header { grid-template-columns: 46px minmax(0, 1fr) 46px; }
+  .tokens-back-button,
+  .tokens-filter-button { width: 46px; height: 46px; }
+  .tokens-screen-header h1 { font-size: 23px; }
+  .tokens-search-field { height: 67px; margin-top: 26px; padding: 0 22px; }
+  .tokens-search-field input { font-size: 21px; }
+  .tokens-screen-row { min-height: 89px; gap: 16px; }
+  .tokens-screen-row .token-mark { width: 58px; height: 58px; flex-basis: 58px; }
+  .tokens-screen-copy strong { font-size: 22px; }
+  .tokens-screen-value strong { font-size: 21px; }
+}
+
+/* Transaction history opened from the home header. */
+.history-wallet-app { height: auto; min-height: 100dvh; overflow: visible; padding: 0; color: var(--ref-ink); background: #fff; }
+.history-screen { min-height: 100dvh; padding: 38px 24px 42px; color: var(--ref-ink); background: #fff; }
+.history-header { display: grid; min-height: 48px; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; }
+.history-header h1 { margin: 0; color: var(--ref-ink); font-size: 24px; font-weight: 650; letter-spacing: -.035em; line-height: 1; text-align: center; }
+.history-back-button { display: grid; width: 48px; height: 48px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: var(--ref-ink); background: var(--ref-surface); cursor: pointer; touch-action: manipulation; }
+.history-back-button:active { transform: scale(.95); }
+.history-back-button:focus-visible, .history-tab:focus-visible, .history-filter-button:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: 3px; }
+.history-back-button .back-arrow-icon { width: 29px; height: 29px; }
+.history-header-spacer { display: block; width: 48px; height: 48px; }
+.history-tabs { display: flex; gap: 25px; margin-top: 31px; overflow-x: auto; border-bottom: 1px solid var(--ref-line); scrollbar-width: none; }
+.history-tabs::-webkit-scrollbar { display: none; }
+.history-tab { position: relative; min-height: 48px; padding: 0 0 14px; border: 0; color: #929398; background: transparent; font: inherit; font-size: 15px; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+.history-tab.active { color: var(--ref-ink); }
+.history-tab.active::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 3px; border-radius: 4px 4px 0 0; background: var(--ref-blue); content: ''; }
+.history-filters { display: flex; gap: 10px; margin-top: 22px; }
+.history-filter-button { display: inline-flex; min-height: 42px; align-items: center; gap: 8px; padding: 0 15px; border: 1px solid var(--ref-line); border-radius: 21px; color: #55565b; background: #fff; font: inherit; font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+.history-filter-button:active { background: var(--ref-surface); }
+.history-filter-button .app-icon { color: #6e6f74; }
+.history-list { margin-top: 32px; }
+.history-day-group + .history-day-group { margin-top: 28px; }
+.history-day-heading { margin: 0 0 10px; color: #77787d; font-size: 15px; font-weight: 650; letter-spacing: -.015em; }
+.history-entry { display: grid; min-height: 83px; grid-template-columns: 42px 46px minmax(0, 1fr) auto; align-items: center; gap: 10px; border-bottom: 1px solid #f0f0f2; }
+.history-entry-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 50%; }
+.history-entry-icon.sent { color: var(--ref-negative); background: #fff0f1; }
+.history-entry-icon.received { color: var(--ref-positive); background: #eaf8ef; }
+.history-direction-arrow { width: 22px; height: 22px; }
+.history-entry > .token-mark, .history-token-fallback { width: 42px; height: 42px; flex-basis: 42px; font-size: 19px; }
+.history-token-fallback { display: grid; place-items: center; border-radius: 50%; color: #fff; background: #26a17b; font-size: 18px; font-weight: 700; }
+.history-entry-copy { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.history-entry-copy strong { overflow: hidden; color: var(--ref-ink); font-size: 16px; font-weight: 650; letter-spacing: -.025em; text-overflow: ellipsis; white-space: nowrap; }
+.history-entry-copy span { overflow: hidden; color: var(--ref-muted); font-size: 13px; font-weight: 500; letter-spacing: -.015em; text-overflow: ellipsis; white-space: nowrap; }
+.history-entry-value { display: flex; min-width: 126px; flex-direction: column; align-items: flex-end; gap: 5px; }
+.history-entry-value strong { font-size: 15px; font-weight: 700; letter-spacing: -.025em; white-space: nowrap; }
+.history-entry-value small { color: var(--ref-muted); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.history-entry-value.sent strong { color: var(--ref-negative); }
+.history-entry-value.received strong { color: var(--ref-positive); }
+.history-empty-state { margin: 42px 0; color: var(--ref-muted); font-size: 16px; text-align: center; }
+
+@media (max-width: 430px) {
+  .history-screen { padding: 37px 22px 34px; }
+  .history-header { grid-template-columns: 46px minmax(0, 1fr) 46px; }
+  .history-back-button, .history-header-spacer { width: 46px; height: 46px; }
+  .history-header h1 { font-size: 23px; }
+  .history-tabs { gap: 21px; margin-top: 26px; }
+  .history-tab { min-height: 46px; font-size: 14px; }
+  .history-filters { margin-top: 18px; }
+  .history-filter-button { min-height: 40px; padding: 0 13px; font-size: 13px; }
+  .history-list { margin-top: 28px; }
+  .history-entry { grid-template-columns: 38px 40px minmax(0, 1fr) auto; gap: 8px; min-height: 78px; }
+  .history-entry-icon { width: 38px; height: 38px; }
+  .history-entry > .token-mark, .history-token-fallback { width: 38px; height: 38px; flex-basis: 38px; }
+  .history-entry-copy strong { font-size: 15px; }
+  .history-entry-copy span { font-size: 12px; }
+  .history-entry-value { min-width: 108px; }
+  .history-entry-value strong { font-size: 13px; }
+  .history-entry-value small { font-size: 12px; }
+}
+
+/* Light transaction details bottom sheet. */
+.history-entry {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid #f0f0f2;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.history-entry:active { opacity: .72; }
+.history-entry:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: 4px; }
+.history-detail-overlay { position: fixed; z-index: 90; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(20,20,25,.3); animation: history-detail-fade-in .22s ease both; }
+.history-detail-sheet { position: relative; width: min(100%, 591px); max-height: 92dvh; overflow-y: auto; padding: 22px 20px calc(20px + env(safe-area-inset-bottom)); border-radius: 25px 25px 0 0; color: var(--ref-ink); background: #fff; box-shadow: 0 -14px 40px rgba(20,20,30,.16); animation: history-detail-sheet-rise .32s cubic-bezier(.22,.8,.24,1) both; }
+.history-detail-header { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; }
+.history-detail-header h2 { margin: 0; color: var(--ref-ink); font-size: 20px; font-weight: 700; letter-spacing: -.035em; line-height: 1; text-align: center; }
+.history-detail-icon-button { display: grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 0; border-radius: 50%; color: #5d5e64; background: var(--ref-surface); cursor: pointer; touch-action: manipulation; }
+.history-detail-icon-button:last-child { justify-self: end; }
+.history-detail-icon-button:active { transform: scale(.94); }
+.history-detail-icon-button:focus-visible, .history-detail-explorer:focus-visible { outline: 2px solid var(--ref-blue); outline-offset: 3px; }
+.history-detail-summary { display: flex; align-items: center; flex-direction: column; gap: 7px; padding: 58px 0 58px; text-align: center; }
+.history-detail-summary strong { color: var(--ref-ink); font-size: clamp(32px, 7vw, 42px); font-weight: 750; letter-spacing: -.055em; line-height: 1; }
+.history-detail-summary span { color: var(--ref-muted); font-size: 20px; font-weight: 500; letter-spacing: -.03em; line-height: 1.1; }
+.history-detail-card { display: flex; padding: 21px 24px; border-radius: 22px; background: #f1f1f3; flex-direction: column; gap: 23px; }
+.history-detail-network-card { margin-top: 16px; }
+.history-detail-row { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 20px; }
+.history-detail-row > span { display: inline-flex; min-width: 0; align-items: center; gap: 6px; color: #77787f; font-size: 15px; font-weight: 550; letter-spacing: -.02em; }
+.history-detail-row > span .app-icon { color: #8b8c92; stroke-width: 1.8; }
+.history-detail-row > strong { max-width: 68%; overflow: hidden; color: #393a40; font-size: 15px; font-weight: 700; letter-spacing: -.025em; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.history-detail-row > strong.history-detail-success { color: var(--ref-positive); }
+.history-detail-value { display: flex; align-items: flex-end; flex-direction: column; gap: 5px; }
+.history-detail-value strong { color: #393a40; font-size: 15px; font-weight: 700; letter-spacing: -.025em; white-space: nowrap; }
+.history-detail-value small { color: var(--ref-muted); font-size: 13px; font-weight: 500; white-space: nowrap; }
+.history-detail-explorer { display: block; width: 100%; min-height: 52px; margin-top: 17px; border: 1px dashed #85868b; border-radius: 26px; color: var(--ref-positive); background: transparent; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+.history-detail-explorer:active { background: rgba(21,153,71,.06); }
+@keyframes history-detail-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes history-detail-sheet-rise { from { opacity: .7; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 430px) {
+  .history-detail-sheet { padding: 20px 16px calc(18px + env(safe-area-inset-bottom)); border-radius: 23px 23px 0 0; }
+  .history-detail-header { grid-template-columns: 42px minmax(0, 1fr) 42px; }
+  .history-detail-icon-button { width: 42px; height: 42px; }
+  .history-detail-header h2 { font-size: 20px; }
+  .history-detail-summary { padding: 50px 0 48px; }
+  .history-detail-summary strong { font-size: 33px; }
+  .history-detail-summary span { font-size: 18px; }
+  .history-detail-card { padding: 20px 18px; border-radius: 20px; gap: 21px; }
+  .history-detail-network-card { margin-top: 14px; }
+  .history-detail-row > span, .history-detail-row > strong, .history-detail-value strong { font-size: 15px; }
+  .history-detail-value small { font-size: 13px; }
+  .history-detail-explorer { min-height: 50px; font-size: 15px; }
+}

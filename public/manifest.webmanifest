@@ -1,0 +1,28 @@
+{
+  "name": "Trust Wallet",
+  "short_name": "Trust Wallet",
+  "description": "A polished crypto wallet portfolio interface.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone"],
+  "orientation": "portrait",
+  "background_color": "#18191a",
+  "theme_color": "#18191a",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/logo.png?v=3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png?v=3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
